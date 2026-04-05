@@ -4,297 +4,492 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#FF6B00">
-<title>KiranaBook — Free Kirana Shop App</title>
-<meta name="description" content="Free inventory and billing app for Kirana shops. Works offline. No subscription needed.">
+<title>KiranaBook - Free Kirana Shop Billing App</title>
+<meta name="description" content="Free offline billing and inventory app for Kirana shops.">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; background: #FFF8F0; color: #333; }
-
-  /* HERO */
-  .hero {
-    background: linear-gradient(135deg, #FF6B00 0%, #E65100 50%, #BF360C 100%);
-    color: white; text-align: center; padding: 60px 20px 80px;
-    position: relative; overflow: hidden;
-  }
-  .hero::after {
-    content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 60px;
-    background: #FFF8F0; clip-path: ellipse(55% 100% at 50% 100%);
-  }
-  .hero-icon { font-size: 4rem; margin-bottom: 16px; }
-  .hero h1 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 900; margin-bottom: 8px; }
-  .hero .tagline { font-size: clamp(1rem, 3vw, 1.3rem); opacity: 0.9; margin-bottom: 32px; }
-  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  .btn-hero {
-    padding: 14px 28px; border-radius: 50px; font-weight: 800; font-size: 1rem;
-    text-decoration: none; border: none; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
-  }
-  .btn-hero:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
-  .btn-primary-hero { background: white; color: #FF6B00; }
-  .btn-outline-hero { background: rgba(255,255,255,0.15); color: white; border: 2px solid rgba(255,255,255,0.6); }
-
-  /* BADGES */
-  .badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 32px 20px 0; }
-  .badge {
-    background: white; border-radius: 50px; padding: 6px 14px;
-    font-size: 0.8rem; font-weight: 700; color: #555;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    display: flex; align-items: center; gap: 6px;
-  }
-
-  /* FEATURES */
-  .section { padding: 60px 20px; max-width: 1000px; margin: 0 auto; }
-  .section-title { text-align: center; font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 900; margin-bottom: 8px; color: #222; }
-  .section-sub { text-align: center; color: #666; margin-bottom: 40px; font-size: 1rem; }
-
-  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
-  .feature-card {
-    background: white; border-radius: 16px; padding: 24px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1.5px solid #FFE0B2;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .feature-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(255,107,0,0.15); }
-  .feature-icon { font-size: 2rem; margin-bottom: 12px; }
-  .feature-title { font-weight: 800; font-size: 1.05rem; margin-bottom: 6px; color: #222; }
-  .feature-desc { font-size: 0.88rem; color: #666; line-height: 1.6; }
-
-  /* INSTALL STEPS */
-  .install-section { background: white; padding: 60px 20px; }
-  .install-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; max-width: 900px; margin: 0 auto; }
-  .install-card {
-    text-align: center; padding: 24px 16px;
-    border-radius: 14px; background: #FFF8F0; border: 1.5px solid #FFE0B2;
-  }
-  .install-num {
-    width: 48px; height: 48px; border-radius: 50%;
-    background: #FF6B00; color: white; font-size: 1.4rem; font-weight: 900;
-    display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
-  }
-  .install-platform { font-weight: 800; font-size: 0.95rem; margin-bottom: 8px; color: #333; }
-  .install-steps { font-size: 0.82rem; color: #666; line-height: 1.8; text-align: left; }
-
-  /* SCREENSHOTS */
-  .screens { display: flex; gap: 16px; overflow-x: auto; padding: 10px 0 20px; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; }
-  .screen-card {
-    min-width: 200px; background: white; border-radius: 20px; padding: 12px;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.1); flex-shrink: 0; scroll-snap-align: start;
-    border: 1.5px solid #F0F0F0;
-  }
-  .screen-placeholder {
-    width: 176px; height: 320px; border-radius: 12px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 8px; font-size: 2rem;
-  }
-  .screen-label { font-size: 0.78rem; font-weight: 700; color: #555; text-align: center; margin-top: 8px; }
-
-  /* CTA */
-  .cta-section {
-    background: linear-gradient(135deg, #FF6B00, #E65100);
-    color: white; text-align: center; padding: 60px 20px;
-  }
-  .cta-section h2 { font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 900; margin-bottom: 12px; }
-  .cta-section p { opacity: 0.9; margin-bottom: 28px; font-size: 1rem; }
-
-  /* FOOTER */
-  footer { background: #222; color: #aaa; text-align: center; padding: 24px 20px; font-size: 0.82rem; }
-  footer a { color: #FF8C00; text-decoration: none; }
-
-  /* RESPONSIVE */
-  @media (max-width: 600px) {
-    .hero { padding: 40px 16px 70px; }
-    .section { padding: 40px 16px; }
-  }
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#FFF8F0;color:#333;overflow-x:hidden}
+.hero{background:linear-gradient(135deg,#FF6B00,#E65100 50%,#BF360C);color:white;text-align:center;padding:50px 20px 80px;position:relative}
+.hero::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:55px;background:#FFF8F0;clip-path:ellipse(55% 100% at 50% 100%)}
+.hero h1{font-size:clamp(2rem,6vw,3.5rem);font-weight:900;margin-bottom:8px}
+.hero .sub{font-size:clamp(.9rem,3vw,1.2rem);opacity:.9;margin-bottom:24px;line-height:1.6}
+.btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:12px 22px;border-radius:50px;font-weight:800;font-size:.9rem;text-decoration:none;border:none;cursor:pointer;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn-w{background:white;color:#FF6B00}
+.btn-o{background:rgba(255,255,255,.15);color:white;border:2px solid rgba(255,255,255,.6)}
+.creds{display:inline-flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+.cred{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.4);border-radius:12px;padding:10px 18px}
+.cred-r{font-size:.65rem;font-weight:700;opacity:.8;text-transform:uppercase;letter-spacing:1px}
+.cred-p{font-size:1.4rem;font-weight:900;letter-spacing:3px}
+.badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:22px 16px 0;max-width:800px;margin:0 auto}
+.badge{background:white;border-radius:50px;padding:5px 12px;font-size:.76rem;font-weight:700;color:#555;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.sec{padding:52px 20px;max-width:1100px;margin:0 auto}
+.sec-t{text-align:center;font-size:clamp(1.3rem,4vw,2rem);font-weight:900;margin-bottom:8px}
+.sec-s{text-align:center;color:#666;margin-bottom:32px;font-size:.92rem}
+/* DEMO */
+.demo-bg{background:white;padding:52px 0}
+.demo-in{max-width:1100px;margin:0 auto;padding:0 20px}
+.sc{position:relative;overflow:hidden;border-radius:20px;box-shadow:0 16px 50px rgba(0,0,0,.12)}
+.st{display:flex;transition:transform .4s cubic-bezier(.25,.46,.45,.94)}
+.sl{min-width:100%;display:flex;flex-direction:column}
+.pw{display:flex;justify-content:center;padding:28px 20px 16px;background:#F8F9FA}
+.ph{width:260px;height:490px;background:#1a1a1a;border-radius:36px;padding:11px;box-shadow:0 24px 70px rgba(0,0,0,.3);flex-shrink:0}
+.ps{width:100%;height:100%;border-radius:26px;overflow:hidden;background:white;display:flex;flex-direction:column}
+.ph2{padding:9px 11px 7px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #FFE0B2}
+.pt{font-weight:800;font-size:.65rem;color:#FF6B00}.pk{font-size:.55rem;color:#aaa}
+.pc{flex:1;overflow:hidden;padding:9px}
+.si{background:#1a1a1a;color:white;padding:24px 28px;width:100%}
+.sn{font-size:.65rem;font-weight:700;color:#FF6B00;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
+.st2{font-size:1.2rem;font-weight:900;margin-bottom:8px}
+.sd{font-size:.84rem;opacity:.8;line-height:1.7}
+.tip{margin-top:10px;background:rgba(255,107,0,.15);border-left:3px solid #FF6B00;padding:7px 11px;border-radius:0 7px 7px 0;font-size:.76rem;color:#FFB74D}
+.nav2{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;background:#111}
+.dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;flex:1}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25);cursor:pointer;transition:all .2s}
+.dot.a{background:#FF6B00;width:18px;border-radius:4px}
+.arr{background:rgba(255,255,255,.1);color:white;border:none;border-radius:50%;width:34px;height:34px;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.arr:hover{background:rgba(255,107,0,.4)}
+.cnt{color:rgba(255,255,255,.5);font-size:.74rem;white-space:nowrap}
+/* Mock */
+.mr{display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid #F5F5F5;font-size:.6rem}
+.ms{background:#FFF8F0;border-radius:7px;padding:7px;margin-bottom:5px;text-align:center}
+.mv{font-size:.95rem;font-weight:900;color:#FF6B00}.ml{font-size:.52rem;color:#888}
+.mb{background:#FF6B00;color:white;border:none;border-radius:5px;padding:4px 9px;font-size:.58rem;font-weight:700;width:100%;margin-top:3px}
+.mi{border:1.5px solid #FFE0B2;border-radius:5px;padding:4px 7px;font-size:.58rem;width:100%;margin-bottom:3px;color:#333}
+.mit{background:#FFF8F0;border-radius:5px;padding:5px 7px;margin-bottom:3px;font-size:.58rem}
+/* Features */
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.fc{background:white;border-radius:12px;padding:18px;box-shadow:0 3px 14px rgba(0,0,0,.06);border:1.5px solid #FFE0B2}
+.fi{font-size:1.6rem;margin-bottom:8px}.ft{font-weight:800;font-size:.9rem;margin-bottom:4px}.fd{font-size:.8rem;color:#666;line-height:1.6}
+/* Install */
+.ib{background:white;padding:52px 20px}
+.ig{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;max-width:860px;margin:0 auto}
+.ic{background:#FFF8F0;border-radius:12px;padding:20px 16px;border:1.5px solid #FFE0B2;text-align:center}
+.is{font-size:.78rem;color:#555;line-height:1.9;text-align:left}
+/* GDrive guide */
+.gg{background:#E8F5E9;border-radius:12px;padding:18px;margin:0 auto 20px;border:1.5px solid #A5D6A7;max-width:800px}
+.gs{display:flex;gap:9px;align-items:flex-start;margin-bottom:9px;font-size:.82rem}
+.gn{background:#2E7D32;color:white;border-radius:50%;width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.65rem}
+/* CTA */
+.cta{background:linear-gradient(135deg,#FF6B00,#E65100);color:white;text-align:center;padding:52px 20px}
+.cta h2{font-size:clamp(1.3rem,4vw,1.9rem);font-weight:900;margin-bottom:10px}
+footer{background:#1a1a1a;color:#888;text-align:center;padding:22px 20px;font-size:.78rem}
+footer a{color:#FF8C00;text-decoration:none}
+@media(max-width:600px){.ph{width:230px;height:420px}.si{padding:18px}.st2{font-size:1rem}}
 </style>
 </head>
 <body>
-
-<!-- HERO -->
 <section class="hero">
-  <div class="hero-icon">📊</div>
+  <div style="font-size:3rem;margin-bottom:10px">📊</div>
   <h1>KiranaBook</h1>
-  <p class="tagline">Free Inventory &amp; Billing App for Kirana Shops<br>Works Offline • No Subscription • Install on Mobile</p>
-  <div class="hero-btns">
-    <a href="kirana-inventory-updated.html" class="btn-hero btn-primary-hero">🚀 Open App Free</a>
-    <a href="#install" class="btn-hero btn-outline-hero">📲 Install on Phone</a>
+  <p class="sub">Free Inventory &amp; Billing App for Kirana Shops<br>Works Offline &bull; No Subscription &bull; Install on Mobile</p>
+  <div class="btns">
+    <a href="kirana-inventory-updated.html" class="btn btn-w">🚀 Open App Free</a>
+    <a href="kirana-inventory-updated.html" download="KiranaBook.html" class="btn btn-o">&#11015; Download App</a>
+    <a href="#install" class="btn btn-o">📲 Install on Phone</a>
+  </div>
+  <div style="font-size:.8rem;opacity:.85;margin-bottom:10px">30-Day Free Trial — No Registration Needed</div>
+  <div class="creds">
+    <div class="cred"><div class="cred-r">👤 User Login</div><div class="cred-p">1234</div></div>
+    <div class="cred"><div class="cred-r">👑 Owner Login</div><div class="cred-p">5678</div></div>
   </div>
 </section>
-
-<!-- BADGES -->
 <div class="badges">
-  <div class="badge">✅ 100% Free</div>
-  <div class="badge">📴 Works Offline</div>
-  <div class="badge">🔒 Data Stays on Your Device</div>
-  <div class="badge">📱 Android &amp; iPhone</div>
-  <div class="badge">☁ Firebase Sync</div>
-  <div class="badge">💾 Google Drive Backup</div>
+  <div class="badge">✅ 100% Free</div><div class="badge">📴 Works Offline</div>
+  <div class="badge">🔒 Data on Device</div><div class="badge">📱 Android &amp; iPhone</div>
+  <div class="badge">☁ Firebase Sync</div><div class="badge">💾 Google Drive Backup</div>
+  <div class="badge">🧾 GST Billing</div><div class="badge">📋 Batch Tracking</div>
 </div>
 
+<!-- DEMO SLIDES -->
+<section class="demo-bg" id="demo">
+<div class="demo-in">
+<h2 class="sec-t">See How It Works</h2>
+<p class="sec-s">13 interactive demos — learn the full app in minutes. Swipe or tap arrows.</p>
+<div class="sc">
+<div class="st" id="ST">
+
+<!-- S1 -->
+<div class="sl">
+<div class="pw"><div class="ph"><div class="ps">
+<div style="background:linear-gradient(135deg,#1a1a2e,#0f3460);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;">
+<div style="font-size:2rem;margin-bottom:8px">📊</div>
+<div style="color:white;font-weight:900;font-size:.85rem;margin-bottom:3px">KiranaBook</div>
+<div style="color:rgba(255,255,255,.5);font-size:.55rem;margin-bottom:18px">Tarun Wholesale Grocery Mart</div>
+<div style="display:flex;gap:7px;margin-bottom:12px">
+  <div style="width:32px;height:38px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:7px;display:flex;align-items:center;justify-content:center;color:white">●</div>
+  <div style="width:32px;height:38px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:7px;display:flex;align-items:center;justify-content:center;color:white">●</div>
+  <div style="width:32px;height:38px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:7px;display:flex;align-items:center;justify-content:center;color:white">●</div>
+  <div style="width:32px;height:38px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:7px;display:flex;align-items:center;justify-content:center;color:white">●</div>
+</div>
+<div style="background:#FF6B00;color:white;padding:7px 18px;border-radius:18px;font-size:.6rem;font-weight:700">Enter PIN to Login</div>
+<div style="margin-top:12px;display:flex;gap:7px">
+  <div style="background:rgba(255,255,255,.1);color:white;padding:4px 10px;border-radius:7px;font-size:.55rem">👤 User: 1234</div>
+  <div style="background:rgba(255,107,0,.3);color:#FFB74D;padding:4px 10px;border-radius:7px;font-size:.55rem">👑 Owner: 5678</div>
+</div>
+</div></div></div></div>
+<div class="si"><div class="sn">Demo 01 / 13</div><div class="st2">Welcome &amp; PIN Login</div>
+<div class="sd">Secure PIN login with two roles — User (1234) for daily work, Owner (5678) for full access including P&amp;L, settings, delete. Owner controls which tabs User can see.</div>
+<div class="tip">💡 Change PINs anytime from Owner settings. Default PIN is same until changed.</div></div></div>
+
+<!-- S2 -->
+<div class="sl">
+<div class="pw"><div class="ph"><div class="ps">
+<div class="ph2"><span class="pt">📊 Dashboard</span><span class="pk">10:30 AM</span></div>
+<div class="pc">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:5px">
+  <div class="ms"><div class="mv" style="color:#2E7D32">₹4,820</div><div class="ml">Today Revenue</div></div>
+  <div class="ms"><div class="mv">₹980</div><div class="ml">Today Profit</div></div>
+  <div class="ms"><div class="mv" style="color:#C62828">₹350</div><div class="ml">Expenses</div></div>
+  <div class="ms"><div class="mv" style="color:#E65100">8</div><div class="ml">Low Stock Items</div></div>
+</div>
+<div style="font-size:.55rem;font-weight:700;color:#888;margin-bottom:3px">TOP SELLING TODAY</div>
+<div class="mr"><span>Tata Salt 1kg</span><span style="color:#FF6B00;font-weight:700">₹440</span></div>
+<div class="mr"><span>Surf Excel 1kg</span><span style="color:#FF6B00;font-weight:700">₹360</span></div>
+<div class="mr"><span>Parle-G 800g</span><span style="color:#FF6B00;font-weight:700">₹250</span></div>
+</div></div></div></div>
+<div class="si"><div class="sn">Demo 02 / 13</div><div class="st2">Dashboard — Live Overview</div>
+<div class="sd">See today's revenue, profit, expenses, and alerts at a glance. Top selling products, low stock warnings shown instantly. Dashboard updates real-time as you make sales.</div>
+<div class="tip">💡 Tap any stat card to jump directly to that section.</div></div></div>
+
+<!-- S3 -->
+<div class="sl">
+<div class="pw"><div class="ph"><div class="ps">
+<div class="ph2"><span class="pt">➕ Add Product</span></div>
+<div class="pc">
+<div style="background:#FFF3E0;border-radius:6px;padding:4px 7px;margin-bottom:5px;font-size:.55rem;font-weight:700;color:#E65100">📷 Barcode: 8901491100019</div>
+<input class="mi" value="Tata Salt 1kg" readonly>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px">
+  <input class="mi" value="Sugar &amp; Salt" readonly style="font-size:.55rem">
+  <input class="mi" value="Tata" readonly style="font-size:.55rem">
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px">
+  <input class="mi" value="25 kg" readonly style="font-size:.55rem">
+  <input class="mi" value="₹20" readonly style="font-size:.55rem">
+  <input class="mi" value="₹25" readonly style="font-size:.55rem">
+</div>
+<div style="background:#E8F5E9;border-radius:5px;padding:4px 7px;font-size:.56rem;color:#2E7D32;margin-bottom:3px">Profit: ₹5 (25% margin)</div>
+<div class="mb">💾 Save Product</div>
+</div></div></div></div>
+<div class="si"><div class="sn">Demo 03 / 13</div><div class="st2">Add Product to Inventory</div>
+<div class="sd">Add products with barcode (auto-generate or scan), name, brand, category, unit, stock qty, min-stock alert, buy price, sell price, expiry. Live profit margin shown. Autocomplete prevents duplicates.</div>
+<div class="tip">💡 Use phone camera or USB barcode scanner to fill barcode instantly.</div></div></div>
+
+<!-- S4 -->
+<div class="sl">
+<div class="pw"><div class="ph"><div class="ps">
+<div class="ph2"><span class="pt">📦 Inventory</span><span class="pk">This Month</span></div>
+<div class="pc">
+<div style="background:#FFF3E0;border-radius:5px;padding:3px 6px;font-size:.55rem;color:#E65100;margin-bottom:4px;font-weight:700">📅 Period: This Month</div>
+<div style="font-size:.52rem;color:#888;margin-bottom:2px;display:flex;justify-content:space-between"><span>Product</span><span>Open</span><span>+Add</span><span>-Sold</span><span>Now</span></div>
+<div class="mr" style="font-size:.54rem"><span>Tata Salt</span><span style="color:#1565C0">30</span><span style="color:#2E7D32">+20</span><span style="color:#C62828">-25</span><span style="font-weight:700">25</span></div>
+<div class="mr" style="font-size:.54rem"><span>Aashirvaad</span><span style="color:#1565C0">10</span><span style="color:#2E7D32">+15</span><span style="color:#C62828">-17</span><span style="font-weight:700">8</span></div>
+<div class="mr" style="font-size:.54rem;background:#FFEBEE"><span>Patanjali Ghee</span><span style="color:#1565C0">8</span><span style="color:#2E7D32">+0</span><span style="color:#C62828">-4</span><span style="font-weight:700;color:#C62828">4⚠</span></div>
+<div class="mr" style="font-size:.54rem"><span>MDH Masala</span><span style="color:#1565C0">15</span><span style="color:#2E7D32">+10</span><span style="color:#C62828">-12</span><span style="font-weight:700">13</span></div>
+</div></div></div></div>
+<div class="si"><div class="sn">Demo 04 / 13</div><div class="st2">Inventory with Date-wise Stock Movement</div>
+<div class="sd">Filter by Today, Week, Month or Custom. See Opening Stock, Added Qty, Sold Qty, Current Stock for every product in the selected period. Opening stock resets at midnight automatically.</div>
+<div class="tip">💡 Added Qty includes batches + supplier purchases. Sold Qty includes billing + customer credits.</div></div></div>
+
+<!-- S5 -->
+<div class="sl">
+<div class="pw"><div class="ph"><div class="ps">
+<div class="ph2"><span class="pt">🧾 Billing</span><span class="pk">Walk-in</span></div>
+<div class="pc">
+<input class="mi" value="🔍 Search: tata salt..." readonly>
+<div class="mit">
+  <div style="font-weight:700;font-size:.62rem">Tata Salt 1kg <span style="color:#1565C0;font-size:.52rem">Tata</span></div>
+  <div style="font-size:.55rem;color:#888">Rate: ₹25/kg</div>
+  <div style="display:flex;gap:5px;align-items:center;margin-top:3px">
+    <div style="background:#F5F5F5;border-radius:4px;padding:2px 6px;font-size:.56rem">− 2 kg +</div>
+    <div style="font-size:.55rem;color:#888">OR</div>
+    <div style="background:#FFF3E0;border-radius:4px;padding:2px 6px;font-size:.56rem;color:#E65100">₹ Amt→Qty</div>
+  </div>
+</div>
+<div class="mit"><div style="font-weight:700;font-size:.62rem">Parle-G 800g <span style="color:#1565C0;font-size:.52rem">Parle</span></div></div>
+<div style="border-top:1px dashed #FFE0B2;margin-top:3px;padding-top:3px;font-size:.56rem">
+  <div style="display:flex;justify-content:space-between"><span>Subtotal</span><span>₹200</span></div>
+  <div style="display:flex;justify-content:space-between;color:#C62828"><span>Discount</span><span>-₹10</span></div>
+  <div style="display:flex;justify-content:space-between;font-weight:900;font-size:.65rem;color:#FF6B00"><span>TOTAL</span><span>₹190</span></div>
+</div>
+</div></div></div></div>
+<div class="si"><div class="sn">Demo 05 / 13</div><div class="st2">Smart Billing — Search, Scan &amp; Sell</div>
+<div class="sd">Search products by name or brand (shown in blue). Set qty directly or enter rupee amount to auto-calculate qty. Per-item discounts, bill-level discount, GST, round-off. Reduces stock automatically on bill completion.</div>
+<div class="tip">💡 Enter ₹ amount — qty auto-calculates! Great for selling loose items by rupees.</div></div></div>
+
+<!-- S6 -->
+<div class="sl">
+<div class="pw"><div class="ph"><div class="ps">
+<div class="ph2"><span class="pt">🧾 Bill Total</span></div>
+<div class="pc">
+<div style="font-size:.58rem">
+  <div class="mr"><span>Subtotal</span><span>₹380.00</span></div>
+  <div class="mr"><span>Discount (5%)</span><span style="color:#C62828">-₹19.00</span></div>
+  <div class="mr"><span>CGST (9%)</span><span style="color:#1565C0">+₹32.49</span></div>
+  <div class="mr"><span>SGST (9%)</span><span style="color:#1565C0">+₹32.49</span></div>
+  <div class="mr"><span>Round Off</span><span style="color:#2E7D32">+₹0.02</span></div>
+  <div class="mr" style="font-weight:900;font-size:.65rem;color:#FF6B00"><span>GRAND TOTAL</span><span>₹426.00</span></div>
+</div>
+<div style="display:flex;gap:3px;margin-top:4px">
+  <div class="mb" style="background:#25D366;font-size:.54rem">💬 WhatsApp</div>
+  <div class="mb" style="font-size:.54rem">🖨️ Print</div>
+</div>
+<div style="margin-top:4px;background:#E8F5E9;border-radius:5px;padding:4px;font-size:.54rem;color:#2E7D32;text-align:center">✅ Complete Bill</div>
+</div></div></div></div>
+<div class="si"><div class="sn">Demo 06 / 13</div><div class="st2">GST Billing + WhatsApp + Print</div>
+<div class="sd">Enable GST (5%, 12%, 18%, 28%) — CGST and SGST split shown. Share bill on WhatsApp with full item details including brand names. Print thermal-style receipt. All saved to sales history automatically.</div>
+<div class="tip">💡 WhatsApp message includes shop name, items, brands, quantities, GST breakup, and total.</div></div></div>
+
+<!-- S7 -->
+<div class="sl">
+<div class="pw"><div class="ph"><div class="ps">
+<div class="ph2"><span class="pt">📋 Stock Batches</span></div>
+<div class="pc">
+<div style="background:#E8F5E9;border-radius:7px;padding:5px 7px;margin-bottom:5px;font-size:.56rem;color:#2E7D32">
+  <div style="font-weight:700">Tata Salt 1kg — 3 batches</div>
+  <div style="color:#888;margin-top:1px">Avg Buy Price: ₹21.50/kg</div>
+</div>
+<div style="font-size:.54rem">
+  <div style="background:#E8F5E9;border-radius:5px;padding:4px 6px;margin-bottom:3px">
+    <div style="display:flex;justify-content:space-between"><span style="font-weight:700">Batch A <span style="color:#2E7D32">FEFO↑</span></span><span>10 kg</span></div>
+    <div style="color:#C62828">Exp: 2026-06-30 · ₹20/kg</div>
+  </div>
+  <div style="background:white;border:1px solid #E0E0E0;border-radius:5px;padding:4px 6px;margin-bottom:3px">
+    <div style="display:flex;justify-content:space-between"><span style="font-weight:700">Batch B</span><span>8 kg</span></div>
+    <div style="color:#888">Exp: 2026-12-01 · ₹22/kg</div>
+  </div>
+  <div style="background:white;border:1px solid #E0E0E0;border-radius:5px;padding:4px 6px">
+    <div style="display:flex;justify-content:space-between"><span style="font-weight:700">Batch C</span><span>7 kg</span></div>
+    <div style="color:#888">No Expiry · ₹23/kg</div>
+  </div>
+</div>
+</div></div></div></div>
+<div class="si"><div class="sn">Demo 07 / 13</div><div class="st2">Batch Stock Management (FEFO)</div>
+<div class="sd">Multiple batches per product with different buy prices and expiry dates. FEFO (First Expire First Out) sorting shows which batch to sell first. Weighted average buy price auto-calculated across all batches.</div>
+<div class="tip">💡 FEFO sorting reduces wastage by alerting which stock to use first.</div></div></div>
+
+<!-- S8 -->
+<div class="sl">
+<div class="pw"><div class="ph"><div class="ps">
+<div class="ph2"><span class="pt">🧑 Customers</span></div>
+<div class="pc">
+<div class="mit" style="background:#FFF3E0">
+  <div style="font-weight:700;font-size:.62rem">Ramesh Kumar · 9876543210</div>
+  <div style="display:flex;justify-content:space-between;margin-top:3px;font-size:.56rem">
+    <span>Outstanding:</span><span style="color:#C62828;font-weight:700">₹1,240</span>
+  </div>
+</div>
+<div style="font-size:.56rem;margin-top:4px">
+  <div class="mr" style="background:#FFF5F5"><span>Goods on Credit</span><span style="color:#C62828">₹2,500</span></div>
+  <div class="mr" style="background:#FFF5F5"><span>[Tata] Salt×10 @₹25</span><span>₹250</span></div>
+  <div class="mr" style="background:#F0FFF4"><span>Payment Received</span><span style="color:#2E7D32">₹1,260</span></div>
+  <div class="mr" style="font-weight:700"><span>Balance Due</span><span style="color:#C62828">₹1,240</span></div>
+</div>
+<div style="display:flex;gap:3px;margin-top:3px">
+  <div class="mb" style="background:#2E7D32;font-size:.52rem">+ Credit Sale</div>
+  <div class="mb" style="font-size:.52rem">💰 Payment</div>
+</div>
+</div></div></div></div>
+<div class="si"><div class="sn">Demo 08 / 13</div><div class="st2">Customer Credit Ledger</div>
+<div class="sd">Maintain ledger for each customer. Add goods on credit with full item list — brand shown in description ([Tata] Salt×10 @Rs.25). Record payments. Track outstanding balance. Export to CSV or WhatsApp statement.</div>
+<div class="tip">💡 Credit sale descriptions include brand for clear record-keeping.</div></div></div>
+
+<!-- S9 -->
+<div class="sl">
+<div class="pw"><div class="ph"><div class="ps">
+<div class="ph2"><span class="pt">🏭 Suppliers</span></div>
+<div class="pc">
+<div class="mit" style="background:#FFF5F5">
+  <div style="font-weight:700;font-size:.62rem">Sharma Distributors</div>
+  <div style="display:flex;justify-content:space-between;margin-top:3px;font-size:.56rem">
+    <span>Amount Payable:</span><span style="color:#C62828;font-weight:700">₹8,450</span>
+  </div>
+</div>
+<div style="font-size:.56rem;margin-top:4px">
+  <div class="mr" style="background:#FFF5F5"><span>Purchase on Credit</span><span style="color:#C62828">₹12,000</span></div>
+  <div class="mr" style="background:#F0FFF4"><span>Payment Made</span><span style="color:#2E7D32">₹3,550</span></div>
+  <div class="mr" style="font-weight:700"><span>Balance Payable</span><span style="color:#C62828">₹8,450</span></div>
+</div>
+<div style="display:flex;gap:3px;margin-top:3px">
+  <div class="mb" style="background:#C62828;font-size:.52rem">+ Purchase</div>
+  <div class="mb" style="font-size:.52rem">💸 Pay</div>
+</div>
+<div style="background:#E8F5E9;border-radius:5px;padding:4px;font-size:.52rem;color:#2E7D32;margin-top:3px">Stock auto-updated on purchase entry</div>
+</div></div></div></div>
+<div class="si"><div class="sn">Demo 09 / 13</div><div class="st2">Supplier Purchase Ledger</div>
+<div class="sd">Record supplier credit purchases with full item list. Stock auto-updates on purchase entry. Track payments made and balance payable. Add new products directly from supplier tab — saves to inventory simultaneously.</div>
+<div class="tip">💡 Adding a new product from Supplier tab saves it to inventory AND adds to purchase entry at once.</div></div></div>
+
+<!-- S10 -->
+<div class="sl">
+<div class="pw"><div class="ph"><div class="ps">
+<div class="ph2"><span class="pt">📈 P&amp;L Report</span><span class="pk">This Month</span></div>
+<div class="pc">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:4px">
+  <div class="ms" style="background:#E8F5E9"><div class="mv" style="color:#2E7D32">₹94K</div><div class="ml">Revenue</div></div>
+  <div class="ms" style="background:#E3F2FD"><div class="mv" style="color:#1565C0">₹72K</div><div class="ml">Cost</div></div>
+  <div class="ms"><div class="mv">₹22K</div><div class="ml">Gross Profit</div></div>
+  <div class="ms" style="background:#FBE9E7"><div class="mv" style="color:#E65100">₹3.2K</div><div class="ml">Expenses</div></div>
+</div>
+<div style="background:#E8F5E9;border-radius:5px;padding:4px 7px;font-size:.56rem">
+  <div style="font-weight:700;color:#2E7D32">Net Profit: ₹18,800</div>
+  <div style="color:#888;margin-top:1px">Margin: 20%</div>
+</div>
+<div style="font-size:.54rem;margin-top:3px;color:#1565C0;font-weight:700">Credit Sales Profit: ₹4,200</div>
+<div style="font-size:.54rem;color:#E65100;font-weight:700">Realised Profit: ₹2,800</div>
+</div></div></div></div>
+<div class="si"><div class="sn">Demo 10 / 13</div><div class="st2">Profit &amp; Loss — Full Picture</div>
+<div class="sd">Complete P&amp;L with revenue, cost of goods (weighted avg buy price), gross profit, expenses, wastage, net profit. Credit sales profit tracked separately — see gross profit on credit and realised profit on payments received.</div>
+<div class="tip">💡 Filter P&amp;L by Today / Week / Month / Custom range to see any period.</div></div></div>
+
+<!-- S11 -->
+<div class="sl">
+<div class="pw"><div class="ph"><div class="ps">
+<div class="ph2"><span class="pt">💾 Backup &amp; Sync</span></div>
+<div class="pc">
+<div style="background:#E8F5E9;border-radius:7px;padding:5px 7px;margin-bottom:4px;border:1.5px solid #A5D6A7">
+  <div style="font-size:.56rem;font-weight:700;color:#2E7D32;margin-bottom:3px">☁ Google Drive — Connected</div>
+  <div style="font-size:.52rem;color:#888">ramesh@gmail.com · Synced 10:30 AM</div>
+  <div class="mb" style="margin-top:3px;font-size:.52rem">⟳ Sync Now</div>
+</div>
+<div style="background:#F3F4F6;border-radius:7px;padding:5px 7px;margin-bottom:3px">
+  <div style="font-size:.56rem;font-weight:700;margin-bottom:3px">📥 Download Backup</div>
+  <div style="display:flex;gap:3px">
+    <div class="mb" style="background:#1565C0;font-size:.52rem">JSON Full</div>
+    <div class="mb" style="background:#2E7D32;font-size:.52rem">CSV Inv.</div>
+  </div>
+</div>
+<div style="background:#FFF3E0;border-radius:5px;padding:4px 7px;font-size:.54rem;color:#E65100;border:1px solid #FFE0B2">
+  ⏱ Auto Backup: Daily ✓
+</div>
+</div></div></div></div>
+<div class="si"><div class="sn">Demo 11 / 13</div><div class="st2">Google Drive Sync &amp; Backup</div>
+<div class="sd">Connect Google Drive (one-time setup) to sync all data to your private Drive folder. Download full JSON backup to restore on any device. CSV export for inventory. Auto-backup runs daily when app opens.</div>
+<div class="tip">💡 JSON backup includes everything — products, sales, ledger, batches, activity log. Restore in one tap.</div></div></div>
+
+<!-- S12 -->
+<div class="sl">
+<div class="pw"><div class="ph"><div class="ps">
+<div class="ph2"><span class="pt">⚙ Firebase Setup</span></div>
+<div class="pc">
+<div style="background:linear-gradient(135deg,#FF6B00,#E65100);border-radius:7px;padding:7px;margin-bottom:5px;color:white;font-size:.56rem;text-align:center">
+  <div style="font-weight:700">☁ Synced to Firebase</div>
+  <div style="opacity:.8;font-size:.52rem">Real-time sync · All devices</div>
+</div>
+<div style="background:#E3F2FD;border-radius:5px;padding:4px 7px;margin-bottom:3px;font-size:.54rem">
+  <div style="font-weight:700;color:#1565C0">Option A: Paste Config Block</div>
+  <div style="color:#666">Copy firebaseConfig from Firebase Console</div>
+</div>
+<div style="background:#F3F4F6;border-radius:5px;padding:4px 7px;font-size:.54rem">
+  <div style="font-weight:700">Option B: Manual Entry</div>
+  <div style="color:#666">Enter API Key, Project ID, DB URL</div>
+</div>
+<div style="margin-top:4px;font-size:.52rem;color:#2E7D32;font-weight:700">✅ 9 collections syncing</div>
+</div></div></div></div>
+<div class="si"><div class="sn">Demo 12 / 13</div><div class="st2">Firebase Real-Time Sync</div>
+<div class="sd">Connect free Firebase Realtime Database for live sync across multiple phones and computers. Owner and shop computer show same data in real-time. Built-in connection tester diagnoses issues. Works on 2G/3G.</div>
+<div class="tip">💡 Firebase Spark (free) plan is enough for most Kirana shops — no cost needed.</div></div></div>
+
+<!-- S13 -->
+<div class="sl">
+<div class="pw"><div class="ph"><div class="ps">
+<div style="background:linear-gradient(135deg,#FF6B00,#E65100);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:8px">
+  <div style="width:56px;height:56px;background:white;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:900;color:#FF6B00;box-shadow:0 8px 20px rgba(0,0,0,.2)">K</div>
+  <div style="color:white;font-weight:900;font-size:.85rem">KiranaBook</div>
+  <div style="background:white;border-radius:9px;padding:9px 12px;text-align:center;width:100%">
+    <div style="font-size:.56rem;font-weight:700;color:#333;margin-bottom:3px">📲 Add to Home Screen</div>
+    <div style="font-size:.52rem;color:#666">Share → Add to Home Screen (iOS)<br>Install banner → Install (Android)</div>
+  </div>
+  <div style="background:rgba(255,255,255,.15);border-radius:9px;padding:7px 11px;text-align:center;width:100%;border:1.5px solid rgba(255,255,255,.4)">
+    <div style="font-size:.56rem;color:white;font-weight:700">✅ Installed! Works offline</div>
+    <div style="font-size:.5rem;color:rgba(255,255,255,.8)">No browser bar · Full screen</div>
+  </div>
+</div></div></div></div>
+<div class="si"><div class="sn">Demo 13 / 13</div><div class="st2">Install as Mobile App (PWA)</div>
+<div class="sd">KiranaBook installs as a full mobile app — no app store needed. On Android, tap the orange Install banner. On iPhone, tap Share → Add to Home Screen. Opens full-screen without browser bar, works offline.</div>
+<div class="tip">💡 After install, all data stored locally on your phone — no internet needed for billing!</div></div></div>
+
+</div><!-- slides track -->
+<div class="nav2">
+  <button class="arr" onclick="prevSlide()">&#8592;</button>
+  <div class="dots" id="SD"></div>
+  <span class="cnt" id="SC">1 / 13</span>
+  <button class="arr" onclick="nextSlide()">&#8594;</button>
+</div>
+</div></div></section>
+
 <!-- FEATURES -->
-<section class="section">
-  <h2 class="section-title">Everything Your Shop Needs</h2>
-  <p class="section-sub">Built specially for Indian Kirana &amp; wholesale shops</p>
-  <div class="features-grid">
+<section class="sec">
+<h2 class="sec-t">All Features</h2><p class="sec-s">Built for Indian Kirana &amp; wholesale shops</p>
+<div class="fg">
+<div class="fc"><div class="fi">🧾</div><div class="ft">Smart Billing</div><div class="fd">Barcode scan, search by name/brand, per-item discount, bill discount, GST (CGST/SGST), round-off, WhatsApp share, print.</div></div>
+<div class="fc"><div class="fi">📦</div><div class="ft">Inventory + Date Filter</div><div class="fd">Opening stock, added qty, sold qty, current stock — filterable by day/week/month/custom period.</div></div>
+<div class="fc"><div class="fi">📋</div><div class="ft">Batch Tracking (FEFO)</div><div class="fd">Multiple batches per product, expiry tracking, FEFO sorting, weighted average buy price.</div></div>
+<div class="fc"><div class="fi">📈</div><div class="ft">Profit &amp; Loss</div><div class="fd">Revenue, cost, gross profit, net profit, credit sales profit, realised profit. Any date range.</div></div>
+<div class="fc"><div class="fi">🧑‍🤝‍🧑</div><div class="ft">Customer Ledger</div><div class="fd">Credit sales with item+brand details, payment tracking, outstanding balance, WhatsApp statement.</div></div>
+<div class="fc"><div class="fi">🏭</div><div class="ft">Supplier Ledger</div><div class="fd">Purchase tracking, stock auto-update, payment made, balance payable, add new products inline.</div></div>
+<div class="fc"><div class="fi">💾</div><div class="ft">Google Drive Backup</div><div class="fd">Sync all data to your Google Drive. Daily auto-backup. Restore from JSON backup. CSV export.</div></div>
+<div class="fc"><div class="fi">☁</div><div class="ft">Firebase Sync</div><div class="fd">Real-time multi-device sync using your free Firebase account. Works on 2G/3G.</div></div>
+<div class="fc"><div class="fi">📴</div><div class="ft">Offline PWA</div><div class="fd">Full app works without internet once installed. Data stored locally on device.</div></div>
+<div class="fc"><div class="fi">📋</div><div class="ft">Activity Log</div><div class="fd">Every action logged with owner/user tag. Filter by type, date. Full audit trail.</div></div>
+<div class="fc"><div class="fi">🔐</div><div class="ft">Role-Based Access</div><div class="fd">Owner (5678) and User (1234) PINs. Owner controls tab access. Full audit trail.</div></div>
+<div class="fc"><div class="fi">💸</div><div class="ft">Expenses Tracking</div><div class="fd">Record rent, electricity, fuel, salary. One-time or recurring. Included in P&amp;L.</div></div>
+</div></section>
 
-    <div class="feature-card">
-      <div class="feature-icon">🧾</div>
-      <div class="feature-title">Smart Billing</div>
-      <div class="feature-desc">Fast bill generation with barcode scan, GST (CGST/SGST), discounts, round-off, WhatsApp share &amp; print.</div>
-    </div>
+<!-- GDRIVE GUIDE -->
+<section class="ib" id="gdrive-guide">
+<div style="max-width:860px;margin:0 auto">
+<h2 class="sec-t">Google Drive Setup Guide</h2>
+<p class="sec-s">One-time free setup — takes 10 minutes — your data syncs privately</p>
+<div class="gg">
+<div class="gs"><div class="gn">1</div><div>Go to <strong>console.cloud.google.com</strong> and sign in with your Google account</div></div>
+<div class="gs"><div class="gn">2</div><div>Click "Select a project" &rarr; "New Project" &rarr; name it <strong>KiranaBook</strong> &rarr; Create</div></div>
+<div class="gs"><div class="gn">3</div><div><strong>APIs &amp; Services</strong> &rarr; Library &rarr; search <strong>"Google Drive API"</strong> &rarr; Enable</div></div>
+<div class="gs"><div class="gn">4</div><div>Credentials &rarr; <strong>Create Credentials</strong> &rarr; <strong>OAuth 2.0 Client ID</strong></div></div>
+<div class="gs"><div class="gn">5</div><div>Application type: <strong>Web application</strong>. Add your site URL to "Authorized JavaScript origins"</div></div>
+<div class="gs"><div class="gn">6</div><div>Copy the <strong>Client ID</strong> (ends with .apps.googleusercontent.com)</div></div>
+<div class="gs"><div class="gn">7</div><div>In KiranaBook: <strong>Backup &amp; Sync tab</strong> &rarr; <strong>Connect Google Drive</strong> &rarr; paste Client ID</div></div>
+<div class="gs"><div class="gn">8</div><div>Sign in with Google &rarr; Allow &rarr; <strong>Sync Now</strong> — your data is now on Google Drive!</div></div>
+</div>
+<p style="text-align:center;font-size:.8rem;color:#666">⚠ If "access blocked" error: OAuth consent screen &rarr; External &rarr; add your email as test user</p>
+</div></section>
 
-    <div class="feature-card">
-      <div class="feature-icon">📦</div>
-      <div class="feature-title">Inventory Management</div>
-      <div class="feature-desc">Track products, stock, buy/sell prices, expiry dates. Get low stock alerts. Batch-wise FEFO tracking.</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">📈</div>
-      <div class="feature-title">Profit &amp; Loss</div>
-      <div class="feature-desc">Daily, weekly, monthly P&amp;L reports. Revenue, cost, gross profit, expenses, wastage all in one view.</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">🧑‍🤝‍🧑</div>
-      <div class="feature-title">Customer &amp; Supplier Ledger</div>
-      <div class="feature-desc">Maintain credit/debit ledgers for customers and suppliers. Track payments, outstanding balances.</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">☁</div>
-      <div class="feature-title">Firebase Sync</div>
-      <div class="feature-desc">Real-time sync across multiple devices using your own free Firebase account. Works even on 2G.</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">💾</div>
-      <div class="feature-title">Google Drive Backup</div>
-      <div class="feature-desc">Auto-backup all data to your Google Drive. Restore anytime. Full JSON &amp; CSV export options.</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">📴</div>
-      <div class="feature-title">Works Offline</div>
-      <div class="feature-desc">Installed as a PWA, the app works fully without internet. Data syncs automatically when connection returns.</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">🔐</div>
-      <div class="feature-title">Owner &amp; User Roles</div>
-      <div class="feature-desc">Separate PIN-protected access for Owner and User. Control which features each role can access.</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">📋</div>
-      <div class="feature-title">Activity Log</div>
-      <div class="feature-desc">Complete audit trail of every action — who added stock, who made sales, who edited records.</div>
-    </div>
-
-  </div>
-</section>
-
-<!-- INSTALL GUIDE -->
-<section class="install-section" id="install">
-  <div style="max-width:1000px;margin:0 auto;">
-    <h2 class="section-title">Install as Mobile App</h2>
-    <p class="section-sub">No app store needed — install directly from browser in 3 steps</p>
-    <div class="install-grid">
-
-      <div class="install-card">
-        <div style="font-size:1.8rem;margin-bottom:8px;">🤖</div>
-        <div class="install-platform">Android (Chrome)</div>
-        <div class="install-steps">
-          1. Open the app in Chrome<br>
-          2. Tap the orange <strong>"Install App"</strong> banner<br>
-          3. Tap <strong>Install</strong><br>
-          ✅ App appears on home screen!
-        </div>
-      </div>
-
-      <div class="install-card">
-        <div style="font-size:1.8rem;margin-bottom:8px;">🍎</div>
-        <div class="install-platform">iPhone / iPad (Safari)</div>
-        <div class="install-steps">
-          1. Open in <strong>Safari</strong> browser<br>
-          2. Tap <strong>Share</strong> button (↑ square)<br>
-          3. Tap <strong>"Add to Home Screen"</strong><br>
-          4. Tap <strong>Add</strong><br>
-          ✅ App appears on home screen!
-        </div>
-      </div>
-
-      <div class="install-card">
-        <div style="font-size:1.8rem;margin-bottom:8px;">💻</div>
-        <div class="install-platform">Desktop (Chrome)</div>
-        <div class="install-steps">
-          1. Open in Chrome browser<br>
-          2. Click install icon (⊕) in address bar<br>
-          3. Click <strong>Install</strong><br>
-          ✅ App opens like a desktop app!
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- SCREEN PREVIEWS -->
-<section class="section">
-  <h2 class="section-title">App Preview</h2>
-  <p class="section-sub">Clean, fast, mobile-first design built for shop owners</p>
-  <div class="screens">
-    <div class="screen-card">
-      <div class="screen-placeholder" style="background:linear-gradient(135deg,#FFF3E0,#FFE0B2);">
-        <span>🧾</span><span style="font-size:0.78rem;font-weight:700;color:#E65100;">Billing</span>
-      </div>
-      <div class="screen-label">Smart Billing</div>
-    </div>
-    <div class="screen-card">
-      <div class="screen-placeholder" style="background:linear-gradient(135deg,#E3F2FD,#BBDEFB);">
-        <span>📦</span><span style="font-size:0.78rem;font-weight:700;color:#1565C0;">Inventory</span>
-      </div>
-      <div class="screen-label">Inventory + Date Filter</div>
-    </div>
-    <div class="screen-card">
-      <div class="screen-placeholder" style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9);">
-        <span>📈</span><span style="font-size:0.78rem;font-weight:700;color:#2E7D32;">P&amp;L</span>
-      </div>
-      <div class="screen-label">Profit &amp; Loss</div>
-    </div>
-    <div class="screen-card">
-      <div class="screen-placeholder" style="background:linear-gradient(135deg,#F3E5F5,#E1BEE7);">
-        <span>🧑‍🤝‍🧑</span><span style="font-size:0.78rem;font-weight:700;color:#6A1B9A;">Ledger</span>
-      </div>
-      <div class="screen-label">Customer Ledger</div>
-    </div>
-    <div class="screen-card">
-      <div class="screen-placeholder" style="background:linear-gradient(135deg,#FBE9E7,#FFCCBC);">
-        <span>💾</span><span style="font-size:0.78rem;font-weight:700;color:#BF360C;">Backup</span>
-      </div>
-      <div class="screen-label">Backup &amp; Sync</div>
-    </div>
-  </div>
-</section>
+<!-- INSTALL -->
+<section class="ib" id="install">
+<div style="max-width:860px;margin:0 auto">
+<h2 class="sec-t">Install as Mobile App</h2><p class="sec-s">No app store. No registration. Install in 3 steps.</p>
+<div class="ig">
+<div class="ic"><div style="font-size:2rem;margin-bottom:8px">🤖</div><div style="font-weight:800;margin-bottom:8px">Android (Chrome)</div><div class="is">1. Open app in Chrome<br>2. Tap orange <strong>Install App</strong> banner<br>3. Tap <strong>Install</strong><br>✅ On home screen!</div></div>
+<div class="ic"><div style="font-size:2rem;margin-bottom:8px">🍎</div><div style="font-weight:800;margin-bottom:8px">iPhone/iPad (Safari)</div><div class="is">1. Open in <strong>Safari</strong><br>2. Tap <strong>Share</strong> (↑)<br>3. <strong>"Add to Home Screen"</strong><br>4. Tap <strong>Add</strong><br>✅ On home screen!</div></div>
+<div class="ic"><div style="font-size:2rem;margin-bottom:8px">💻</div><div style="font-weight:800;margin-bottom:8px">Desktop Chrome</div><div class="is">1. Open in Chrome<br>2. Click ⊕ in address bar<br>3. Click <strong>Install</strong><br>✅ Opens like desktop app!</div></div>
+</div></div></section>
 
 <!-- CTA -->
-<section class="cta-section">
-  <h2>Start Using KiranaBook Today</h2>
-  <p>Free forever. No registration. No credit card. Works offline.<br>Your data stays on your device — 100% private.</p>
-  <div class="hero-btns">
-    <a href="kirana-inventory-updated.html" class="btn-hero btn-primary-hero">🚀 Open KiranaBook Free</a>
-  </div>
-  <p style="margin-top:20px;font-size:0.82rem;opacity:0.8;">
-    Built by <strong>Motilal Chandrakar</strong> · Contact: 9301818479
-  </p>
+<section class="cta">
+<h2>Start Using KiranaBook Today — Free!</h2>
+<p>30-day free trial. No credit card. No registration. Just open and use.</p>
+<div class="btns" style="margin-bottom:14px">
+  <a href="kirana-inventory-updated.html" class="btn btn-w">🚀 Open App Free</a>
+  <a href="kirana-inventory-updated.html" download="KiranaBook.html" class="btn btn-o">&#11015; Download App File</a>
+</div>
+<div class="creds" style="margin-top:0">
+  <div class="cred"><div class="cred-r">👤 User PIN</div><div class="cred-p">1234</div></div>
+  <div class="cred"><div class="cred-r">👑 Owner PIN</div><div class="cred-p">5678</div></div>
+</div>
+<p style="margin-top:18px;font-size:.78rem;opacity:.75">Built by Motilal Chandrakar · 9301818479</p>
 </section>
-
-<!-- FOOTER -->
 <footer>
-  <p>KiranaBook &copy; 2025 — Free Inventory &amp; Billing App for Kirana Shops</p>
-  <p style="margin-top:6px;">
-    <a href="kirana-inventory-updated.html">Open App</a> &nbsp;|&nbsp;
-    <a href="https://github.com">GitHub</a> &nbsp;|&nbsp;
-    Developer: Motilal Chandrakar · 9301818479
-  </p>
+<p>KiranaBook &copy; 2025 — Free Inventory &amp; Billing App for Kirana Shops</p>
+<p style="margin-top:5px"><a href="kirana-inventory-updated.html">Open App</a> &nbsp;|&nbsp; <a href="#demo">Demo</a> &nbsp;|&nbsp; <a href="#gdrive-guide">Google Drive Setup</a> &nbsp;|&nbsp; <a href="#install">Install</a></p>
+<p style="margin-top:5px">Developer: Motilal Chandrakar · 9301818479</p>
 </footer>
-
-</body>
-</html>
+<script>
+var cur=0,tot=13,tr=document.getElementById('ST'),sd=document.getElementById('SD'),sc=document.getElementById('SC'),at=null;
+for(var i=0;i<tot;i++){var d=document.createElement('div');d.className='dot'+(i===0?' a':'');d.dataset.i=i;d.onclick=function(){go(+this.dataset.i)};sd.appendChild(d);}
+function go(n){cur=(n+tot)%tot;tr.style.transform='translateX(-'+cur*100+'%)';document.querySelectorAll('.dot').forEach(function(d,i){d.className='dot'+(i===cur?' a':'')});sc.textContent=(cur+1)+' / '+tot;reset();}
+function nextSlide(){go(cur+1)}function prevSlide(){go(cur-1)}
+function reset(){clearInterval(at);at=setInterval(function(){go(cur+1)},5000)}reset();
+var tx=0;tr.parentElement.addEventListener('touchstart',function(e){tx=e.touches[0].clientX},{passive:true});
+tr.parentElement.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50){if(dx<0)nextSlide();else prevSlide();}});
+</script>
+</body></html>

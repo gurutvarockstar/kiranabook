@@ -2978,6 +2978,15 @@
           <div style="font-size:0.72rem;color:var(--muted);margin-top:8px;">
             &#128274; Your data is saved privately to your own Google Drive. Only you can access it.
           </div>
+          <div style="margin-top:10px;background:#FFF3E0;border-radius:8px;padding:8px 10px;font-size:0.75rem;color:#E65100;">
+            <strong>Setup needed:</strong> Requires a free Google Cloud OAuth2 Client ID.<br>
+            1. Visit <strong>console.cloud.google.com</strong><br>
+            2. Create project &rarr; Enable "Google Drive API"<br>
+            3. Credentials &rarr; OAuth 2.0 Client ID (Web app)<br>
+            4. Add <strong id="gdrive-origin-show"></strong> to Authorized Origins<br>
+            5. Tap "Connect" and paste your Client ID
+            <script>var el=document.getElementById('gdrive-origin-show');if(el)el.textContent=window.location.origin;</script>
+          </div>
         </div>
 
         <!-- ── Full Backup (JSON) ── -->
@@ -10091,29 +10100,45 @@ function gdriveInit() {
 }
 
 function gdriveConnect() {
-  // Prompt user for Client ID if not set
   var clientId = localStorage.getItem('kirana_gdrive_client_id') || '';
   if (!clientId) {
-    clientId = prompt(
-      'Google Drive Setup\n\n' +
-      'You need a free Google Cloud OAuth2 Client ID.\n\n' +
-      'Steps:\n' +
-      '1. Go to console.cloud.google.com\n' +
-      '2. Create project -> Enable "Google Drive API"\n' +
-      '3. Credentials -> Create OAuth 2.0 Client ID (Web application)\n' +
-      '4. Add your app URL to "Authorized JavaScript origins"\n' +
-      '5. Paste the Client ID below:\n',
-      ''
-    );
-    if (!clientId || !clientId.includes('.apps.googleusercontent.com')) {
-      showToast('Invalid Client ID. Please enter a valid Google OAuth Client ID.', 'error');
+    // Show step-by-step setup dialog
+    var msg = 'GOOGLE DRIVE SETUP (One-time, Free)\n\n' +
+      'Step 1: Go to console.cloud.google.com\n' +
+      'Step 2: Click "Select Project" > "New Project" > name it "KiranaBook"\n' +
+      'Step 3: Click "Enable APIs" > search "Google Drive API" > Enable\n' +
+      'Step 4: Go to "Credentials" > "Create Credentials" > "OAuth 2.0 Client ID"\n' +
+      'Step 5: Application type = "Web application"\n' +
+      'Step 6: Authorized JavaScript origins = ' + window.location.origin + '\n' +
+      'Step 7: Copy the Client ID (ends in .apps.googleusercontent.com)\n\n' +
+      'Paste your Client ID below:';
+    clientId = prompt(msg, '');
+    if (!clientId || clientId.trim().length < 10) {
+      showToast('Setup cancelled. See Backup tab for instructions.', 'error');
+      return;
+    }
+    clientId = clientId.trim();
+    if (!clientId.includes('.apps.googleusercontent.com')) {
+      showToast('That does not look like a valid Client ID. It should end with .apps.googleusercontent.com', 'error');
       return;
     }
     localStorage.setItem('kirana_gdrive_client_id', clientId);
     GDRIVE_CLIENT_ID = clientId;
   }
-  gdriveInit();
-  gdriveRequestToken();
+  // Load GIS library if not loaded
+  if (!document.getElementById('gis-script')) {
+    showToast('Loading Google sign-in...');
+    var s = document.createElement('script');
+    s.id = 'gis-script';
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.onload = function() { setTimeout(gdriveRequestToken, 500); };
+    s.onerror = function() { showToast('Failed to load Google library. Check internet connection.', 'error'); };
+    document.head.appendChild(s);
+  } else if (window.google && window.google.accounts) {
+    gdriveRequestToken();
+  } else {
+    setTimeout(gdriveRequestToken, 1000);
+  }
 }
 
 function gdriveRequestToken() {
@@ -10356,46 +10381,31 @@ function toggleAutoBackup() {
     if (mEl) mEl.href = mUrl;
   } catch(e) {}
 
-  // 3. Service Worker for offline support
+  // 3. Service Worker — register sw.js if it exists (GitHub Pages / Netlify)
+  // Blob URL service workers are blocked by browsers for security.
+  // The app caches external resources directly via Cache API instead.
   if ('serviceWorker' in navigator) {
-    var sw = [
-      "const CACHE='kiranabook-v3';",
-      "self.addEventListener('install',function(e){",
-      "  self.skipWaiting();",
-      "});",
-      "self.addEventListener('activate',function(e){",
-      "  e.waitUntil(caches.keys().then(function(ks){",
-      "    return Promise.all(ks.filter(function(k){return k!==CACHE;}).map(function(k){return caches.delete(k);}));",
-      "  }));",
-      "  self.clients.claim();",
-      "});",
-      "self.addEventListener('fetch',function(e){",
-      "  var url=e.request.url;",
-      "  if(url.includes('firebaseio.com')||url.includes('firebasedatabase.app')||url.includes('googleapis.com/identitytoolkit'))return;",
-      "  if(url.includes('fonts.googleapis.com')||url.includes('fonts.gstatic.com')||url.includes('gstatic.com/firebasejs')){",
-      "    e.respondWith(caches.open(CACHE).then(function(cache){",
-      "      return cache.match(e.request).then(function(cached){",
-      "        return cached||fetch(e.request).then(function(r){cache.put(e.request,r.clone());return r;});",
-      "      });",
-      "    }));return;",
-      "  }",
-      "  if(e.request.mode==='navigate'){",
-      "    e.respondWith(caches.open(CACHE).then(function(cache){",
-      "      return cache.match(e.request).then(function(cached){",
-      "        var fp=fetch(e.request).then(function(r){if(r&&r.status===200)cache.put(e.request,r.clone());return r;}).catch(function(){return cached;});",
-      "        return cached||fp;",
-      "      });",
-      "    }));",
-      "  }",
-      "});"
-    ].join('\n');
-    try {
-      var swBlob = new Blob([sw], {type:'application/javascript'});
-      var swUrl  = URL.createObjectURL(swBlob);
-      navigator.serviceWorker.register(swUrl, {scope: '/'})
-        .then(function(r){ console.log('[KiranaBook] SW registered'); })
-        .catch(function(e){ console.warn('[KiranaBook] SW failed:',e); });
-    } catch(e) { console.warn('[KiranaBook] SW error:',e); }
+    // Try to register sw.js (works on GitHub Pages, Netlify, any real server)
+    var swPath = (window.location.pathname.split('/').slice(0,-1).join('/') || '') + '/sw.js';
+    navigator.serviceWorker.register(swPath)
+      .then(function(r) { console.log('[KiranaBook] SW registered:', r.scope); })
+      .catch(function() {
+        // sw.js not found — use direct Cache API for offline support
+        var CACHE = 'kiranabook-v3';
+        if ('caches' in window) {
+          caches.open(CACHE).then(function(cache) {
+            // Cache fonts and firebase SDK for offline use
+            var externalResources = [
+              'https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans:wght@400;500;600&display=swap',
+              'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js',
+              'https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js'
+            ];
+            externalResources.forEach(function(url) {
+              fetch(url).then(function(r) { if(r.ok) cache.put(url, r); }).catch(function(){});
+            });
+          });
+        }
+      });
   }
 
   // 4. Install prompt (Android Chrome)

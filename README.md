@@ -3,45 +3,37 @@
 > Free Inventory & Billing app for Indian Kirana shops. Works offline as a mobile app (PWA).
 
 ## 🌐 Live App
-**Open App:** [kiranabook on GitHub Pages](https://YOUR_USERNAME.github.io/kiranabook/kirana-inventory-updated.html)
+**Landing Page:** `https://YOUR_USERNAME.github.io/kiranabook/`  
+**Open App:** `https://YOUR_USERNAME.github.io/kiranabook/kirana-inventory-updated.html`
+
+## 🔑 Default Login PINs
+| Role | PIN |
+|------|-----|
+| 👤 User | **1234** |
+| 👑 Owner | **5678** |
 
 ## 📲 Install as Mobile App
-
-### Android (Chrome)
-1. Open the app link in Chrome
-2. Tap the orange **"Install App"** banner
-3. Tap **Install** → App on home screen ✅
-
-### iPhone / iPad (Safari)
-1. Open in **Safari**
-2. Tap **Share** (↑) → **"Add to Home Screen"** → **Add** ✅
-
-## ✨ Features
-- 🧾 **Billing** — Fast billing with GST, discounts, barcode scan, WhatsApp share
-- 📦 **Inventory** — Stock tracking with date-wise added/sold/opening/closing
-- 📈 **P&L Reports** — Daily/weekly/monthly profit & loss
-- 🧑‍🤝‍🧑 **Ledger** — Customer & supplier credit/debit tracking
-- 💾 **Backup** — Google Drive sync + JSON/CSV export
-- 📴 **Offline** — Works without internet (PWA)
-- ☁ **Firebase Sync** — Multi-device real-time sync
-- 🔐 **Roles** — Owner/User PIN-based access control
+### Android (Chrome): Tap the orange "Install App" banner
+### iPhone/iPad (Safari): Share → Add to Home Screen → Add
 
 ## 🚀 Deploy to GitHub Pages
-
-1. Fork or upload this repository to GitHub
-2. Go to **Settings → Pages**
-3. Source: **Deploy from a branch → main → / (root)**
-4. Save — your app is live at `https://YOUR_USERNAME.github.io/kiranabook/`
+1. Fork or upload this repo to GitHub
+2. Settings → Pages → Source: **main branch / root**
+3. Save → your app is live at `https://YOUR_USERNAME.github.io/kiranabook/`
 
 ## 📁 Files
 | File | Description |
 |------|-------------|
-| `index.html` | Landing page |
-| `kirana-inventory-updated.html` | The full app |
+| `index.html` | Landing page with 13 demo slides |
+| `kirana-inventory-updated.html` | The full KiranaBook app |
+| `sw.js` | Service Worker for offline PWA support |
 | `README.md` | This file |
+
+## ☁ Google Drive Sync Setup
+See the landing page for full 8-step setup guide.
 
 ## 👨‍💻 Developer
 **Motilal Chandrakar** · 9301818479
 
 ---
-*KiranaBook is free forever. No subscription. No registration. Your data stays on your device.*
+*KiranaBook is free. No subscription. No registration. Your data stays on your device.*
