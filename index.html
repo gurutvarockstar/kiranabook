@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FF6B00">
+<title>KiranaBook — Free Kirana Shop App</title>
+<meta name="description" content="Free inventory and billing app for Kirana shops. Works offline. No subscription needed.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #FFF8F0; color: #333; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #FF6B00 0%, #E65100 50%, #BF360C 100%);
+    color: white; text-align: center; padding: 60px 20px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero::after {
+    content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 60px;
+    background: #FFF8F0; clip-path: ellipse(55% 100% at 50% 100%);
+  }
+  .hero-icon { font-size: 4rem; margin-bottom: 16px; }
+  .hero h1 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 900; margin-bottom: 8px; }
+  .hero .tagline { font-size: clamp(1rem, 3vw, 1.3rem); opacity: 0.9; margin-bottom: 32px; }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-hero {
+    padding: 14px 28px; border-radius: 50px; font-weight: 800; font-size: 1rem;
+    text-decoration: none; border: none; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-hero:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  .btn-primary-hero { background: white; color: #FF6B00; }
+  .btn-outline-hero { background: rgba(255,255,255,0.15); color: white; border: 2px solid rgba(255,255,255,0.6); }
+
+  /* BADGES */
+  .badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 32px 20px 0; }
+  .badge {
+    background: white; border-radius: 50px; padding: 6px 14px;
+    font-size: 0.8rem; font-weight: 700; color: #555;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* FEATURES */
+  .section { padding: 60px 20px; max-width: 1000px; margin: 0 auto; }
+  .section-title { text-align: center; font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 900; margin-bottom: 8px; color: #222; }
+  .section-sub { text-align: center; color: #666; margin-bottom: 40px; font-size: 1rem; }
+
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .feature-card {
+    background: white; border-radius: 16px; padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1.5px solid #FFE0B2;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .feature-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(255,107,0,0.15); }
+  .feature-icon { font-size: 2rem; margin-bottom: 12px; }
+  .feature-title { font-weight: 800; font-size: 1.05rem; margin-bottom: 6px; color: #222; }
+  .feature-desc { font-size: 0.88rem; color: #666; line-height: 1.6; }
+
+  /* INSTALL STEPS */
+  .install-section { background: white; padding: 60px 20px; }
+  .install-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; max-width: 900px; margin: 0 auto; }
+  .install-card {
+    text-align: center; padding: 24px 16px;
+    border-radius: 14px; background: #FFF8F0; border: 1.5px solid #FFE0B2;
+  }
+  .install-num {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: #FF6B00; color: white; font-size: 1.4rem; font-weight: 900;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
+  }
+  .install-platform { font-weight: 800; font-size: 0.95rem; margin-bottom: 8px; color: #333; }
+  .install-steps { font-size: 0.82rem; color: #666; line-height: 1.8; text-align: left; }
+
+  /* SCREENSHOTS */
+  .screens { display: flex; gap: 16px; overflow-x: auto; padding: 10px 0 20px; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; }
+  .screen-card {
+    min-width: 200px; background: white; border-radius: 20px; padding: 12px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.1); flex-shrink: 0; scroll-snap-align: start;
+    border: 1.5px solid #F0F0F0;
+  }
+  .screen-placeholder {
+    width: 176px; height: 320px; border-radius: 12px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; font-size: 2rem;
+  }
+  .screen-label { font-size: 0.78rem; font-weight: 700; color: #555; text-align: center; margin-top: 8px; }
+
+  /* CTA */
+  .cta-section {
+    background: linear-gradient(135deg, #FF6B00, #E65100);
+    color: white; text-align: center; padding: 60px 20px;
+  }
+  .cta-section h2 { font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 900; margin-bottom: 12px; }
+  .cta-section p { opacity: 0.9; margin-bottom: 28px; font-size: 1rem; }
+
+  /* FOOTER */
+  footer { background: #222; color: #aaa; text-align: center; padding: 24px 20px; font-size: 0.82rem; }
+  footer a { color: #FF8C00; text-decoration: none; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .hero { padding: 40px 16px 70px; }
+    .section { padding: 40px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-icon">📊</div>
+  <h1>KiranaBook</h1>
+  <p class="tagline">Free Inventory &amp; Billing App for Kirana Shops<br>Works Offline • No Subscription • Install on Mobile</p>
+  <div class="hero-btns">
+    <a href="kirana-inventory-updated.html" class="btn-hero btn-primary-hero">🚀 Open App Free</a>
+    <a href="#install" class="btn-hero btn-outline-hero">📲 Install on Phone</a>
+  </div>
+</section>
+
+<!-- BADGES -->
+<div class="badges">
+  <div class="badge">✅ 100% Free</div>
+  <div class="badge">📴 Works Offline</div>
+  <div class="badge">🔒 Data Stays on Your Device</div>
+  <div class="badge">📱 Android &amp; iPhone</div>
+  <div class="badge">☁ Firebase Sync</div>
+  <div class="badge">💾 Google Drive Backup</div>
+</div>
+
+<!-- FEATURES -->
+<section class="section">
+  <h2 class="section-title">Everything Your Shop Needs</h2>
+  <p class="section-sub">Built specially for Indian Kirana &amp; wholesale shops</p>
+  <div class="features-grid">
+
+    <div class="feature-card">
+      <div class="feature-icon">🧾</div>
+      <div class="feature-title">Smart Billing</div>
+      <div class="feature-desc">Fast bill generation with barcode scan, GST (CGST/SGST), discounts, round-off, WhatsApp share &amp; print.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📦</div>
+      <div class="feature-title">Inventory Management</div>
+      <div class="feature-desc">Track products, stock, buy/sell prices, expiry dates. Get low stock alerts. Batch-wise FEFO tracking.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📈</div>
+      <div class="feature-title">Profit &amp; Loss</div>
+      <div class="feature-desc">Daily, weekly, monthly P&amp;L reports. Revenue, cost, gross profit, expenses, wastage all in one view.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🧑‍🤝‍🧑</div>
+      <div class="feature-title">Customer &amp; Supplier Ledger</div>
+      <div class="feature-desc">Maintain credit/debit ledgers for customers and suppliers. Track payments, outstanding balances.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">☁</div>
+      <div class="feature-title">Firebase Sync</div>
+      <div class="feature-desc">Real-time sync across multiple devices using your own free Firebase account. Works even on 2G.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">💾</div>
+      <div class="feature-title">Google Drive Backup</div>
+      <div class="feature-desc">Auto-backup all data to your Google Drive. Restore anytime. Full JSON &amp; CSV export options.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📴</div>
+      <div class="feature-title">Works Offline</div>
+      <div class="feature-desc">Installed as a PWA, the app works fully without internet. Data syncs automatically when connection returns.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🔐</div>
+      <div class="feature-title">Owner &amp; User Roles</div>
+      <div class="feature-desc">Separate PIN-protected access for Owner and User. Control which features each role can access.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📋</div>
+      <div class="feature-title">Activity Log</div>
+      <div class="feature-desc">Complete audit trail of every action — who added stock, who made sales, who edited records.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- INSTALL GUIDE -->
+<section class="install-section" id="install">
+  <div style="max-width:1000px;margin:0 auto;">
+    <h2 class="section-title">Install as Mobile App</h2>
+    <p class="section-sub">No app store needed — install directly from browser in 3 steps</p>
+    <div class="install-grid">
+
+      <div class="install-card">
+        <div style="font-size:1.8rem;margin-bottom:8px;">🤖</div>
+        <div class="install-platform">Android (Chrome)</div>
+        <div class="install-steps">
+          1. Open the app in Chrome<br>
+          2. Tap the orange <strong>"Install App"</strong> banner<br>
+          3. Tap <strong>Install</strong><br>
+          ✅ App appears on home screen!
+        </div>
+      </div>
+
+      <div class="install-card">
+        <div style="font-size:1.8rem;margin-bottom:8px;">🍎</div>
+        <div class="install-platform">iPhone / iPad (Safari)</div>
+        <div class="install-steps">
+          1. Open in <strong>Safari</strong> browser<br>
+          2. Tap <strong>Share</strong> button (↑ square)<br>
+          3. Tap <strong>"Add to Home Screen"</strong><br>
+          4. Tap <strong>Add</strong><br>
+          ✅ App appears on home screen!
+        </div>
+      </div>
+
+      <div class="install-card">
+        <div style="font-size:1.8rem;margin-bottom:8px;">💻</div>
+        <div class="install-platform">Desktop (Chrome)</div>
+        <div class="install-steps">
+          1. Open in Chrome browser<br>
+          2. Click install icon (⊕) in address bar<br>
+          3. Click <strong>Install</strong><br>
+          ✅ App opens like a desktop app!
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SCREEN PREVIEWS -->
+<section class="section">
+  <h2 class="section-title">App Preview</h2>
+  <p class="section-sub">Clean, fast, mobile-first design built for shop owners</p>
+  <div class="screens">
+    <div class="screen-card">
+      <div class="screen-placeholder" style="background:linear-gradient(135deg,#FFF3E0,#FFE0B2);">
+        <span>🧾</span><span style="font-size:0.78rem;font-weight:700;color:#E65100;">Billing</span>
+      </div>
+      <div class="screen-label">Smart Billing</div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-placeholder" style="background:linear-gradient(135deg,#E3F2FD,#BBDEFB);">
+        <span>📦</span><span style="font-size:0.78rem;font-weight:700;color:#1565C0;">Inventory</span>
+      </div>
+      <div class="screen-label">Inventory + Date Filter</div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-placeholder" style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9);">
+        <span>📈</span><span style="font-size:0.78rem;font-weight:700;color:#2E7D32;">P&amp;L</span>
+      </div>
+      <div class="screen-label">Profit &amp; Loss</div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-placeholder" style="background:linear-gradient(135deg,#F3E5F5,#E1BEE7);">
+        <span>🧑‍🤝‍🧑</span><span style="font-size:0.78rem;font-weight:700;color:#6A1B9A;">Ledger</span>
+      </div>
+      <div class="screen-label">Customer Ledger</div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-placeholder" style="background:linear-gradient(135deg,#FBE9E7,#FFCCBC);">
+        <span>💾</span><span style="font-size:0.78rem;font-weight:700;color:#BF360C;">Backup</span>
+      </div>
+      <div class="screen-label">Backup &amp; Sync</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Start Using KiranaBook Today</h2>
+  <p>Free forever. No registration. No credit card. Works offline.<br>Your data stays on your device — 100% private.</p>
+  <div class="hero-btns">
+    <a href="kirana-inventory-updated.html" class="btn-hero btn-primary-hero">🚀 Open KiranaBook Free</a>
+  </div>
+  <p style="margin-top:20px;font-size:0.82rem;opacity:0.8;">
+    Built by <strong>Motilal Chandrakar</strong> · Contact: 9301818479
+  </p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>KiranaBook &copy; 2025 — Free Inventory &amp; Billing App for Kirana Shops</p>
+  <p style="margin-top:6px;">
+    <a href="kirana-inventory-updated.html">Open App</a> &nbsp;|&nbsp;
+    <a href="https://github.com">GitHub</a> &nbsp;|&nbsp;
+    Developer: Motilal Chandrakar · 9301818479
+  </p>
+</footer>
+
+</body>
+</html>
