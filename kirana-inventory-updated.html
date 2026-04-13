@@ -1747,12 +1747,32 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-title">🔍 <span data-i18n="Search & Add Products">Search & Add Products</span></div>
-            <div class="search-row">
-              <input type="text" id="bill-search" placeholder="Search product name..." oninput="renderBillSearch()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+          <div class="card" style="padding-bottom:8px;">
+            <div class="card-title" style="margin-bottom:10px;">
+              🔍 <span data-i18n="Search & Add Products">Search &amp; Add Products</span>
             </div>
-            <div id="bill-search-results" style="display:flex; flex-direction:column; gap:6px; max-height:420px; overflow-y:auto; margin-top:8px;"></div>
+            <!-- Voice status indicator -->
+            <div id="voice-status" style="display:none;background:#E3F2FD;border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:0.82rem;color:#1565C0;font-weight:700;text-align:center;border:1.5px solid #90CAF9;">
+              🎤 <span id="voice-status-text">Listening...</span>
+            </div>
+            <!-- Search bar with mic button inside -->
+            <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;">
+              <div style="position:relative;flex:1;">
+                <input type="text" id="bill-search" placeholder="Search product name..."
+                  oninput="renderBillSearch()"
+                  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                  style="width:100%;padding-right:40px;">
+                <button id="voice-btn" onclick="voiceTap()"
+                  title="Tap to search by voice (works in English &amp; Hindi)"
+                  style="position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.3rem;padding:2px 4px;line-height:1;color:#1565C0;">
+                  🎤
+                </button>
+              </div>
+            </div>
+            <!-- Category filter chips -->
+            <div id="bill-cat-chips" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;"></div>
+            <!-- Product list -->
+            <div id="bill-search-results" style="display:flex;flex-direction:column;gap:6px;max-height:460px;overflow-y:auto;"></div>
           </div>
         </div>
 
@@ -3640,7 +3660,7 @@ function switchTab(tab) {
   if (tab === 'inventory') { renderInventory(); renderCatFilter(); }
   if (tab === 'lowstock') renderLowStock();
   if (tab === 'outofstock') renderOutOfStock();
-  if (tab === 'billing') { renderBillSearch(); updateBillTotal(); }
+  if (tab === 'billing') { renderBillSearch(); renderBillCatChips(); updateBillTotal(); }
   if (tab === 'history') { renderHistory(); if (currentHistTab === 'activity') renderActivityLog(); }
   if (tab === 'barcodegen') initBarcodeGen();
   if (tab === 'pnl') { renderPnL(); }
@@ -3685,7 +3705,7 @@ function switchTabDirect(tab) {
   if (navBtn) navBtn.classList.add('active');
   if (tab === 'dashboard') renderDashboard();
   if (tab === 'inventory') { renderInventory(); renderCatFilter(); }
-  if (tab === 'billing') { renderBillSearch(); updateBillTotal(); }
+  if (tab === 'billing') { renderBillSearch(); renderBillCatChips(); updateBillTotal(); }
 }
 
 // ===== ACCESS CONTROL MODAL =====
@@ -4384,21 +4404,66 @@ function closeModal() {
 }
 
 // ===================== BILLING =====================
+var _billCatFilter = ''; // currently selected category chip
+
+function renderBillCatChips() {
+  var chipsEl = document.getElementById("bill-cat-chips");
+  if (!chipsEl) return;
+  var cats = [];
+  products.forEach(function(p) {
+    if (p.stock > 0 && p.category && !cats.includes(p.category)) cats.push(p.category);
+  });
+  cats.sort();
+  var isHi = typeof _currentLang !== "undefined" && _currentLang === "hi";
+  var allLabel = isHi ? "सभी" : "All";
+  // Build chips using DOM (avoids quote-in-string JS errors)
+  chipsEl.innerHTML = "";
+  var allCats = [""].concat(cats);
+  allCats.forEach(function(cat) {
+    var active = _billCatFilter === cat;
+    var btn = document.createElement("button");
+    btn.textContent = cat ? cat : allLabel;
+    btn.setAttribute("data-cat", cat);
+    btn.style.cssText = "padding:5px 12px;border-radius:20px;font-size:0.72rem;font-weight:700;cursor:pointer;white-space:nowrap;margin:0;" +
+      "border:1.5px solid " + (active ? "var(--saffron)" : "var(--border)") + ";" +
+      "background:" + (active ? "var(--saffron)" : "white") + ";" +
+      "color:" + (active ? "white" : "#555") + ";";
+    btn.onclick = function() { setBillCat(this.getAttribute("data-cat")); };
+    chipsEl.appendChild(btn);
+  });
+}
+
+function setBillCat(cat) {
+  _billCatFilter = cat;
+  renderBillCatChips();
+  renderBillSearch();
+}
+
 function renderBillSearch() {
-  const q = document.getElementById('bill-search').value.toLowerCase();
+  const q = document.getElementById('bill-search') ? document.getElementById('bill-search').value.toLowerCase() : '';
   const res = document.getElementById('bill-search-results');
-  // Show ALL in-stock items when search is empty, filtered list when searching
-  const filtered = q
-    ? products.filter(p =>
-        p.name.toLowerCase().includes(q) || p.barcode.includes(q) || (p.brand||'').toLowerCase().includes(q)
-      ).slice(0, 12)
-    : products.filter(p => p.stock > 0)
-              .sort((a,b) => a.name.localeCompare(b.name))
-              .slice(0, 50);
-  if (filtered.length === 0 && q) {
-    res.innerHTML = '<div style="color:var(--muted);text-align:center;padding:16px;font-size:0.85rem">कोई उत्पाद नहीं मिला / No products found</div>';
+  if (!res) return;
+  renderBillCatChips();
+
+  // Filter: category + search + in-stock
+  var pool = products.filter(function(p) {
+    if (p.stock <= 0) return false;
+    if (_billCatFilter && p.category !== _billCatFilter) return false;
+    if (!q) return true;
+    return p.name.toLowerCase().includes(q) || p.barcode.includes(q) || (p.brand||'').toLowerCase().includes(q);
+  });
+
+  // Sort alphabetically always
+  pool.sort(function(a,b) { return a.name.localeCompare(b.name); });
+  pool = pool.slice(0, 60);
+
+  if (pool.length === 0) {
+    res.innerHTML = '<div style="color:var(--muted);text-align:center;padding:16px;font-size:0.85rem">' +
+      (typeof _currentLang !== 'undefined' && _currentLang === 'hi' ? 'कोई उत्पाद नहीं मिला' : 'No products found') + '</div>';
     return;
   }
+  const filtered = pool;
+  const q_orig = q;
   res.innerHTML = filtered.map(p => {
     const hasPieces = isPiecesUnit(p.unit) && p.piecesperpkt > 0 && p.pieceprice > 0;
     const totalPieces = hasPieces ? p.stock * p.piecesperpkt : 0;
@@ -4479,6 +4544,12 @@ function addToBill(id, mode) {
   }
   renderBillItems();
   updateBillTotal();
+  // Clear search so user can immediately search next item
+  var searchEl = document.getElementById('bill-search');
+  if (searchEl && searchEl.value) {
+    searchEl.value = '';
+    renderBillSearch(); // show full list again
+  }
 }
 
 function renderBillItems() {
@@ -4989,8 +5060,9 @@ function sendWhatsApp() {
 
 function closeWaModal() {
   document.getElementById('wa-modal').style.display = 'none';
-  // Only clear bill if we came from billing tab
-  if (document.getElementById('tab-billing').style.display !== 'none') {
+  // Check if billing tab is currently active (uses CSS class, not inline style)
+  var billingTab = document.getElementById('tab-billing');
+  if (billingTab && billingTab.classList.contains('active')) {
     clearBill();
   }
 }
@@ -5788,7 +5860,7 @@ function bcPrint() {
       <button onclick="window.print()">🖨️ Print</button>
     </div>
     <div class="wrap">${canvases}</div>
-    <script>
+    ${'<'}script>
       const C128=${JSON.stringify(C128)};
       function encode(text){
         let codes=[104];let check=104;
@@ -5815,7 +5887,7 @@ function bcPrint() {
         ${qtyLine ? `ctx.font='bold 11px sans-serif';ctx.fillStyle='#1565C0';ctx.fillText('${qtyLine}',W/2,y);y+=13;` : ''}
         ${price ? `ctx.font='bold 12px sans-serif';ctx.fillStyle='#E65100';ctx.fillText('₹${price}',W/2,y);` : ''}
       }
-    <\/script>
+    ${'<'}/script>
   </body></html>`);
 }
 
@@ -5881,7 +5953,7 @@ function bcBulkPrintData(data) {
       <span style="color:#888;font-size:0.8em">${data.reduce((s,d)=>s+d.copies,0)} label(s) for ${data.length} product(s)</span>
     </div>
     ${canvases}
-    <script>
+    ${'<'}script>
       const pats=${JSON.stringify(C128.patterns)};
       const chars=' !"#$%&\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\\]^_\`abcdefghijklmnopqrstuvwxyz{|}~';
       function encode(t){let c=[104],s=104;for(let i=0;i<t.length;i++){const x=chars.indexOf(t[i]);if(x<0)continue;c.push(x);s+=x*(i+1);}c.push(s%103);c.push(106);return c.map(v=>pats[v]||'').join('');}
@@ -5912,7 +5984,7 @@ function bcBulkPrintData(data) {
           if(wrap) drawLabel(wrap,d.barcode,d.name,d.qty,d.unit,d.price);
         }
       });
-    <\/script></body></html>`);
+    ${'<'}/script></body></html>`);
   showToast('✅ Bulk print window opened!');
 }
 
@@ -11002,6 +11074,223 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 function expCatChange(){}
 function expEditCatChange(){}
+</script>
+
+<!-- ═══════════════════════════════════════════
+     VOICE RECOGNITION FOR BILLING (TAP MIC)
+════════════════════════════════════════════ -->
+<script>
+var _voiceRecog = null;
+var _voiceActive = false;
+var _micPermissionGranted = false;
+
+// Step 1: Request mic permission explicitly via getUserMedia first.
+// This is required on Android Chrome before SpeechRecognition works,
+// even if the user already granted permission in browser settings.
+function voiceTap() {
+  if (_voiceActive) {
+    if (_voiceRecog) { try { _voiceRecog.stop(); } catch(e) {} }
+    _voiceActive = false;
+    _voiceResetBtn();
+    return;
+  }
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    var isHi = typeof _currentLang !== 'undefined' && _currentLang === 'hi';
+    showToast(isHi ? 'Chrome/Edge ब्राउज़र में खोलें' : 'Open in Chrome or Edge browser for voice', 'error');
+    return;
+  }
+  // Always request getUserMedia first — this is what actually triggers
+  // the permission dialog and unlocks SpeechRecognition on Android
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(function(stream) {
+        // Permission granted — stop the stream (we don't need it, SpeechAPI manages its own)
+        stream.getTracks().forEach(function(t) { t.stop(); });
+        _micPermissionGranted = true;
+        _voiceStart();
+      })
+      .catch(function(err) {
+        var isHi = typeof _currentLang !== 'undefined' && _currentLang === 'hi';
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+          showToast(isHi
+            ? 'माइक की अनुमति दें: Browser Settings > This Site > Microphone > Allow'
+            : 'Mic blocked. Go to: Browser menu > Settings > Site Settings > Microphone > Allow this site',
+            'error');
+        } else {
+          showToast('Mic error: ' + err.message, 'error');
+        }
+      });
+  } else {
+    // Older browser — try directly
+    _voiceStart();
+  }
+}
+
+function _voiceResetBtn() {
+  var btn = document.getElementById('voice-btn');
+  if (btn) { btn.style.color = '#1565C0'; btn.style.transform = ''; }
+  var statusEl = document.getElementById('voice-status');
+  if (statusEl) statusEl.style.display = 'none';
+}
+
+function _voiceStart() {
+  _voiceActive = true;
+  var btn = document.getElementById('voice-btn');
+  var statusEl = document.getElementById('voice-status');
+  var statusText = document.getElementById('voice-status-text');
+  var isHi = typeof _currentLang !== 'undefined' && _currentLang === 'hi';
+
+  if (btn) { btn.style.color = '#C62828'; btn.style.transform = 'scale(1.2)'; }
+  if (statusEl) statusEl.style.display = 'block';
+  if (statusText) statusText.textContent = isHi ? 'सुन रहा हूं... बोलें' : 'Listening... speak now';
+
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  _voiceRecog = new SR();
+  _voiceRecog.lang = isHi ? 'hi-IN' : 'en-IN';
+  _voiceRecog.continuous = false;
+  _voiceRecog.interimResults = true;
+  _voiceRecog.maxAlternatives = 3;
+
+  _voiceRecog.onresult = function(event) {
+    var transcript = '';
+    for (var i = event.resultIndex; i < event.results.length; i++) {
+      transcript += event.results[i][0].transcript;
+    }
+    if (statusText) statusText.textContent = '"' + transcript + '"';
+    var searchEl = document.getElementById('bill-search');
+    if (searchEl) { searchEl.value = transcript; renderBillSearch(); }
+  };
+
+  _voiceRecog.onend = function() {
+    _voiceActive = false;
+    _voiceResetBtn();
+    var searchEl = document.getElementById('bill-search');
+    var text = searchEl ? searchEl.value.trim() : '';
+    if (text) {
+      renderBillSearch();
+      var q = text.toLowerCase();
+      var matches = (typeof products !== 'undefined' ? products : []).filter(function(p) {
+        return p.stock > 0 && (
+          p.name.toLowerCase().includes(q) ||
+          (p.brand||'').toLowerCase().includes(q)
+        );
+      });
+      if (matches.length === 1) {
+        setTimeout(function() { addToBill(matches[0].id, 'packet'); }, 300);
+      }
+    }
+  };
+
+  _voiceRecog.onerror = function(event) {
+    _voiceActive = false;
+    _voiceResetBtn();
+    if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+      var isHiNow = typeof _currentLang !== 'undefined' && _currentLang === 'hi';
+      showToast(isHiNow
+        ? 'माइक ब्लॉक है — Browser > Settings > Site Settings > Mic > Allow'
+        : 'Mic blocked — Chrome menu > Site Settings > Microphone > Allow',
+        'error');
+    } else if (event.error === 'network') {
+      showToast('Voice needs internet connection', 'error');
+    } else if (event.error !== 'aborted' && event.error !== 'no-speech') {
+      showToast('Voice error: ' + event.error, 'error');
+    }
+  };
+
+  try {
+    _voiceRecog.start();
+  } catch(e) {
+    _voiceActive = false;
+    _voiceResetBtn();
+    showToast('Could not start mic: ' + e.message, 'error');
+  }
+}
+
+// Backward compat
+function voiceStart(e) { voiceTap(); }
+function voiceStop(e) {
+  if (_voiceRecog && _voiceActive) { try { _voiceRecog.stop(); } catch(e) {} }
+  _voiceActive = false; _voiceResetBtn();
+}
+
+// Parse voice command and add to bill
+function processVoiceCommand(text) {
+  if (!text) return;
+  var lc = text.toLowerCase().trim();
+
+  // Try to extract: [brand] [product] [qty] [unit]
+  // e.g. "patanjali sugar 2 kg"
+  // e.g. "tata salt 1"
+  // e.g. "parle g 3 packet"
+
+  // Parse quantity and unit from end of string
+  var qty = 1;
+  var unit = '';
+  var qtyUnitMatch = lc.match(/(\d+(?:\.\d+)?)\s*(kg|g\b|l\b|ml|pcs|pcs|packet|packets|piece|pieces|dozen|bottle|box|kg|litre|liter|kilo|gram)?\s*$/i);
+  if (qtyUnitMatch) {
+    qty = parseFloat(qtyUnitMatch[1]) || 1;
+    unit = (qtyUnitMatch[2] || '').toLowerCase().replace(/s$/, '').replace('litre','L').replace('liter','L').replace('kilo','kg').replace('gram','g');
+    lc = lc.slice(0, qtyUnitMatch.index).trim();
+    text = text.slice(0, text.toLowerCase().indexOf(qtyUnitMatch[0])).trim();
+  }
+
+  // Now find best matching product
+  var bestMatch = null;
+  var bestScore = 0;
+  var words = lc.split(/\s+/).filter(Boolean);
+
+  products.forEach(function(p) {
+    if (p.stock <= 0) return;
+    var pName = p.name.toLowerCase();
+    var pBrand = (p.brand || '').toLowerCase();
+    var score = 0;
+
+    words.forEach(function(w) {
+      if (w.length < 2) return;
+      if (pName.includes(w)) score += (w.length >= 4 ? 3 : 1);
+      if (pBrand.includes(w)) score += 2;
+    });
+    // Bonus: full name match
+    if (pName.includes(lc)) score += 5;
+
+    if (score > bestScore) { bestScore = score; bestMatch = p; }
+  });
+
+  if (!bestMatch || bestScore < 1) {
+    // Show search results for user to pick manually
+    var searchEl = document.getElementById('bill-search');
+    if (searchEl) { searchEl.value = text; renderBillSearch(); }
+    showToast('Voice: "' + text + '" — tap item to add', 'error');
+    return;
+  }
+
+  // Add to bill
+  var stepVal = qtyMin(unit || bestMatch.unit);
+  var addQty = Math.max(stepVal, qty);
+  // Adjust unit if matched
+  var effectiveUnit = unit || bestMatch.unit;
+
+  var existing = billItems.find(function(x) { return x.id === bestMatch.id && x.sellMode !== 'piece'; });
+  if (existing) {
+    existing.qty = parseFloat((existing.qty + addQty).toFixed(3));
+    if (existing.qty > bestMatch.stock) existing.qty = bestMatch.stock;
+  } else {
+    billItems.push({
+      id: bestMatch.id, billKey: bestMatch.id,
+      name: bestMatch.name, brand: bestMatch.brand || '',
+      price: bestMatch.sellprice, qty: Math.min(addQty, bestMatch.stock),
+      unit: effectiveUnit || bestMatch.unit, maxStock: bestMatch.stock, sellMode: 'packet'
+    });
+  }
+
+  renderBillItems(); updateBillTotal();
+  // Clear search
+  var searchEl = document.getElementById('bill-search');
+  if (searchEl) { searchEl.value = ''; renderBillSearch(); }
+
+  var isHi = typeof _currentLang !== 'undefined' && _currentLang === 'hi';
+  showToast((isHi ? 'जोड़ा: ' : 'Added: ') + bestMatch.name + ' × ' + addQty + ' ' + (effectiveUnit || bestMatch.unit));
+}
 </script>
 
 <!-- PWA: Manifest + Service Worker + Install Banner -->
