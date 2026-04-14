@@ -1571,7 +1571,7 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
       <div class="card">
         <div class="card-title">📦 <span data-i18n="All Products">All Products</span></div>
         <div class="search-row">
-          <input type="text" id="search-input" placeholder="🔍 Search by name, brand..." oninput="renderInventory()">
+          <input type="text" id="search-input" data-voice="search" data-voice-target="renderInventory" placeholder="🔍 Search by name, brand..." oninput="renderInventory()">
           <select id="cat-filter" onchange="renderInventory()">
             <option value="">All Categories</option>
           </select>
@@ -1661,39 +1661,39 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
           </div>
           <div class="form-group">
             <label data-i18n="Product Name">Product Name *</label>
-            <input type="text" id="f-name" placeholder="e.g. Tata Salt 1kg" list="dl-product-names" autocomplete="off" oninput="updateProductDatalist()">
+            <input type="text" id="f-name" data-voice="text" placeholder="e.g. Tata Salt 1kg" list="dl-product-names" autocomplete="off" oninput="updateProductDatalist()">
           <datalist id="dl-product-names"></datalist>
           </div>
           <div class="form-group">
             <label data-i18n="Category">Category *</label>
-            <input type="text" id="f-category" placeholder="e.g. Atta & Rice" list="dl-categories" autocomplete="off">
+            <input type="text" id="f-category" data-voice="text" placeholder="e.g. Atta & Rice" list="dl-categories" autocomplete="off">
             <datalist id="dl-categories"></datalist>
           </div>
           <div class="form-group">
             <label data-i18n="Brand">Brand</label>
-            <input type="text" id="f-brand" placeholder="e.g. Tata, Patanjali, MDH" list="dl-brand-names" autocomplete="off">
+            <input type="text" id="f-brand" data-voice="text" placeholder="e.g. Tata, Patanjali, MDH" list="dl-brand-names" autocomplete="off">
           <datalist id="dl-brand-names"></datalist>
           </div>
           <div class="form-group">
             <label data-i18n="Unit">Unit</label>
-            <input type="text" id="f-unit" placeholder="e.g. kg" list="dl-units" autocomplete="off" oninput="togglePiecesPanel()">
+            <input type="text" id="f-unit" data-voice="text" placeholder="e.g. kg" list="dl-units" autocomplete="off" oninput="togglePiecesPanel()">
             <datalist id="dl-units"></datalist>
           </div>
           <div class="form-group">
             <label data-i18n="Quantity in Stock">Quantity in Stock *</label>
-            <input type="number" id="f-stock" placeholder="0" min="0">
+            <input type="number" id="f-stock" data-voice="number" placeholder="0" min="0">
           </div>
           <div class="form-group">
             <label data-i18n="Min Stock Alert">Min Stock Alert Level</label>
-            <input type="number" id="f-minstock" placeholder="5" min="0">
+            <input type="number" id="f-minstock" data-voice="number" placeholder="5" min="0">
           </div>
           <div class="form-group">
             <label data-i18n="Buy Price">Buy Price (₹) *</label>
-            <input type="number" id="f-buyprice" placeholder="0.00" step="0.01">
+            <input type="number" id="f-buyprice" data-voice="number" placeholder="0.00" step="0.01">
           </div>
           <div class="form-group">
             <label data-i18n="Sell Price">Sell Price (₹) *</label>
-            <input type="number" id="f-sellprice" placeholder="0.00" step="0.01">
+            <input type="number" id="f-sellprice" data-voice="number" placeholder="0.00" step="0.01">
           </div>
           <!-- Pieces per packet panel — shows when unit = packet or dozen -->
           <div class="form-group full" id="f-pieces-panel" style="display:none;">
@@ -1724,7 +1724,7 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
           </div>
           <div class="form-group full">
             <label>Notes</label>
-            <input type="text" id="f-notes" placeholder="Any additional info...">
+            <input type="text" id="f-notes" data-voice="text" placeholder="Any additional info...">
           </div>
         </div>
         <div class="form-actions">
@@ -2472,13 +2472,13 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
           <div class="card-title">💸 <span data-i18n="Add Expense">Add Expense</span></div>
           <div class="form-group">
             <label>Category</label>
-            <input type="text" id="exp-category" placeholder="e.g. Shop Rent" list="dl-exp-categories" autocomplete="off">
+            <input type="text" id="exp-category" data-voice="text" placeholder="e.g. Shop Rent" list="dl-exp-categories" autocomplete="off">
             <datalist id="dl-exp-categories"></datalist>
           </div>
           
           <div class="form-group">
             <label>Amount (₹)</label>
-            <input type="number" id="exp-amount" placeholder="0.00" min="0" step="0.01">
+            <input type="number" id="exp-amount" data-voice="number" placeholder="0.00" min="0" step="0.01">
           </div>
           <div class="form-group">
             <label>Date</label>
@@ -2495,7 +2495,7 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
           </div>
           <div class="form-group">
             <label>Notes <span style="font-size:0.75rem;color:var(--muted)">(optional)</span></label>
-            <input type="text" id="exp-notes" placeholder="e.g. March rent, Staff name...">
+            <input type="text" id="exp-notes" data-voice="text" placeholder="e.g. March rent, Staff name...">
           </div>
           <button class="btn btn-primary" style="width:100%" onclick="saveExpense()"><span data-i18n="Save Expense">💾 Save Expense</span></button>
         </div>
@@ -2636,7 +2636,12 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
 
             <div class="form-group" style="margin-bottom:12px;">
               <label>Select Product *</label>
-              <select id="w-product" onchange="wFillProduct()">
+              <div style="display:flex;gap:6px;align-items:center;">
+                <input type="text" id="w-product-search" data-voice="search" data-voice-target="wFilterProducts"
+                  placeholder="Type to search product..." autocomplete="off"
+                  oninput="wFilterProducts()" style="flex:1;">
+              </div>
+              <select id="w-product" onchange="wFillProduct()" style="margin-top:6px;">
                 <option value="">-- Choose product --</option>
               </select>
             </div>
@@ -2739,7 +2744,12 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
 
             <div class="form-group" style="margin-bottom:12px;">
               <label>Select Product *</label>
-              <select id="b-product" onchange="bFillProduct()">
+              <div style="display:flex;gap:6px;align-items:center;">
+                <input type="text" id="b-product-search" data-voice="search" data-voice-target="bFilterProducts"
+                  placeholder="Type to search product..." autocomplete="off"
+                  oninput="bFilterProducts()" style="flex:1;">
+              </div>
+              <select id="b-product" onchange="bFillProduct()" style="margin-top:6px;">
                 <option value="">-- Choose existing product --</option>
               </select>
             </div>
@@ -2849,7 +2859,7 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
           <div style="font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--saffron);">🧑‍🤝‍🧑 <span data-i18n="Customers">Customers</span> Ledger</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-            <input type="text" id="cust-search" placeholder="🔍 Search customer..." oninput="renderCustomerList()"
+            <input type="text" id="cust-search" data-voice="search" data-voice-target="renderCustomerList" placeholder="🔍 Search customer..." oninput="renderCustomerList()"
               style="padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.83rem;width:180px;">
             <button class="btn btn-primary" onclick="openAddParty('customer')"><span data-i18n="Add Customer">➕ Add Customer</span></button>
           </div>
@@ -2917,7 +2927,7 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
           <div style="font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:#1565C0;">🏭 <span data-i18n="Suppliers">Suppliers</span> Ledger</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-            <input type="text" id="supp-search" placeholder="🔍 Search supplier..." oninput="renderSupplierList()"
+            <input type="text" id="supp-search" data-voice="search" data-voice-target="renderSupplierList" placeholder="🔍 Search supplier..." oninput="renderSupplierList()"
               style="padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.83rem;width:180px;">
             <button class="btn btn-primary" onclick="openAddParty('supplier')"><span data-i18n="Add Supplier">➕ Add Supplier</span></button>
           </div>
@@ -3082,15 +3092,15 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
     <input type="hidden" id="party-modal-id">
     <div class="form-group">
       <label><span data-i18n="Name">Name</span> <span style="color:var(--red)">*</span></label>
-      <input type="text" id="party-name" placeholder="Full name...">
+      <input type="text" id="party-name" data-voice="text" placeholder="Full name...">
     </div>
     <div class="form-group">
       <label data-i18n="Phone">Phone</label>
-      <input type="text" id="party-phone" placeholder="Mobile number...">
+      <input type="text" id="party-phone" data-voice="number" placeholder="Mobile number...">
     </div>
     <div class="form-group">
       <label>Address</label>
-      <input type="text" id="party-address" placeholder="Shop / house address...">
+      <input type="text" id="party-address" data-voice="text" placeholder="Shop / house address...">
     </div>
     <div class="form-group" id="party-gst-group">
       <label>GST No. <span style="font-size:0.75rem;color:var(--muted)">(Suppliers only)</span></label>
@@ -3098,7 +3108,7 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
     </div>
     <div class="form-group">
       <label>Notes</label>
-      <input type="text" id="party-notes" placeholder="Any notes...">
+      <input type="text" id="party-notes" data-voice="text" placeholder="Any notes...">
     </div>
     <div style="display:flex;gap:8px;margin-top:4px;">
       <button class="btn btn-primary" style="flex:1;" onclick="saveParty()">💾 Save</button>
@@ -3155,7 +3165,7 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
             <!-- Left: search + all inventory list -->
             <div>
               <div style="display:flex;gap:6px;margin-bottom:8px;">
-                <input type="text" id="ledger-prod-search" placeholder="🔍 Search name or barcode..." oninput="renderLedgerProdSearch()"
+                <input type="text" id="ledger-prod-search" data-voice="search" data-voice-target="renderLedgerProdSearch" placeholder="🔍 Search name or barcode..." oninput="renderLedgerProdSearch()"
                   style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.83rem;box-sizing:border-box;outline:none;">
                 <select id="ledger-cat-filter" onchange="renderLedgerProdSearch()"
                   style="padding:7px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:0.8rem;outline:none;cursor:pointer;background:white;">
@@ -3292,27 +3302,27 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
               <!-- Product Name -->
               <div class="form-group" style="margin-bottom:0;">
                 <label>Product Name *</label>
-                <input type="text" id="npf-name" placeholder="e.g. Tata Salt 1kg" list="dl-npf-product-names" autocomplete="off" oninput="updateNpfDatalist()">
+                <input type="text" id="npf-name" data-voice="text" placeholder="e.g. Tata Salt 1kg" list="dl-npf-product-names" autocomplete="off" oninput="updateNpfDatalist()">
                 <datalist id="dl-npf-product-names"></datalist>
               </div>
 
               <!-- Category -->
               <div class="form-group" style="margin-bottom:0;">
                 <label>Category *</label>
-                <input type="text" id="npf-category" placeholder="e.g. Atta & Rice" list="dl-categories" autocomplete="off">
+                <input type="text" id="npf-category" data-voice="text" placeholder="e.g. Atta & Rice" list="dl-categories" autocomplete="off">
               </div>
 
               <!-- Brand -->
               <div class="form-group" style="margin-bottom:0;">
                 <label>Brand</label>
-                <input type="text" id="npf-brand" placeholder="e.g. Tata, Patanjali, MDH" list="dl-npf-brand-names" autocomplete="off">
+                <input type="text" id="npf-brand" data-voice="text" placeholder="e.g. Tata, Patanjali, MDH" list="dl-npf-brand-names" autocomplete="off">
                 <datalist id="dl-npf-brand-names"></datalist>
               </div>
 
               <!-- Unit -->
               <div class="form-group" style="margin-bottom:0;">
                 <label>Unit</label>
-                <input type="text" id="npf-unit" placeholder="e.g. kg" list="dl-units" autocomplete="off" oninput="npfTogglePiecesPanel()">
+                <input type="text" id="npf-unit" data-voice="text" placeholder="e.g. kg" list="dl-units" autocomplete="off" oninput="npfTogglePiecesPanel()">
               </div>
 
               <!-- Qty in Stock -->
@@ -4578,8 +4588,22 @@ function renderBillItems() {
       '<button class="qty-btn" style="border-color:var(--red);color:var(--red);margin-left:6px" onclick="removeBillItem(' + i + ')">✕</button>',
       '</div>',
 
-      // Rate
-      '<div style="font-size:0.75rem;color:var(--muted);margin-bottom:6px;">Rate: ₹' + item.price + '/' + item.unit + '</div>',
+      // Rate + Packet/Piece toggle (shows only when product has piece pricing)
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">',
+      '<span style="font-size:0.75rem;color:var(--muted);">Rate: ₹' + item.price + '/' + item.unit + '</span>',
+      // Packet↔Piece toggle — only show when product has pieces configured
+      (function() {
+        var p = products.find(function(x) { return x.id === item.id; });
+        if (!p || !p.piecesperpkt || !p.pieceprice) return '';
+        var isPacket = item.sellMode !== 'piece';
+        return '<span style="display:inline-flex;border:1.5px solid var(--border);border-radius:6px;overflow:hidden;margin-left:auto;">' +
+          '<button onclick="switchBillMode(' + i + ',\'packet\')" style="padding:2px 8px;font-size:0.68rem;font-weight:700;border:none;cursor:pointer;' +
+            (isPacket ? 'background:var(--saffron);color:white;' : 'background:white;color:var(--muted);') + '">📦 Packet</button>' +
+          '<button onclick="switchBillMode(' + i + ',\'piece\')" style="padding:2px 8px;font-size:0.68rem;font-weight:700;border:none;cursor:pointer;' +
+            (!isPacket ? 'background:#2E7D32;color:white;' : 'background:white;color:var(--muted);') + '">🔢 Piece</button>' +
+          '</span>';
+      })(),
+      '</div>',
 
       // Controls row
       '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px;">',
@@ -7255,6 +7279,17 @@ function renderLedgerItemList() {
             'onchange="setLedgerItemPrice(' + i + ',parseFloat(this.value))" title="Price per ' + item.unit + '">' +
           '<span style="font-size:0.68rem;color:var(--muted);">/' + item.unit + '</span>' +
         '</div>' +
+        // Packet↔Piece toggle for ledger items
+        (function() {
+          var p = (typeof products !== 'undefined' ? products : []).find(function(x) { return x.id === item.id; });
+          if (!p || !p.piecesperpkt || !p.pieceprice) return '';
+          return '<span style="display:inline-flex;border:1.5px solid var(--border);border-radius:5px;overflow:hidden;margin-left:4px;">' +
+            '<button onclick="switchLedgerMode(' + i + ',\'packet\')" style="padding:2px 7px;font-size:0.65rem;font-weight:700;border:none;cursor:pointer;' +
+              (!isPiece ? 'background:var(--saffron);color:white;' : 'background:white;color:var(--muted);') + '">📦 Packet</button>' +
+            '<button onclick="switchLedgerMode(' + i + ',\'piece\')" style="padding:2px 7px;font-size:0.65rem;font-weight:700;border:none;cursor:pointer;' +
+              (isPiece ? 'background:#2E7D32;color:white;' : 'background:white;color:var(--muted);') + '">🔢 Piece</button>' +
+            '</span>';
+        })() +
         '<span style="font-size:0.82rem;font-weight:800;color:' + (isPiece ? '#2E7D32' : 'var(--saffron)') + ';margin-left:auto;">₹' + (item.price * item.qty).toFixed(2) + '</span>' +
       '</div>' +
       // Amount → Qty row
@@ -11290,6 +11325,222 @@ function processVoiceCommand(text) {
 
   var isHi = typeof _currentLang !== 'undefined' && _currentLang === 'hi';
   showToast((isHi ? 'जोड़ा: ' : 'Added: ') + bestMatch.name + ' × ' + addQty + ' ' + (effectiveUnit || bestMatch.unit));
+}
+</script>
+
+<!-- VOICE MIC INJECTOR + PACKET/PIECE TOGGLE FUNCTIONS -->
+<script>
+// ══════════════════════════════════════════════════════
+// UNIVERSAL VOICE MIC BUTTON INJECTOR
+// Scans for data-voice attributes and inserts mic buttons
+// ══════════════════════════════════════════════════════
+function injectVoiceMics() {
+  document.querySelectorAll('[data-voice]').forEach(function(inp) {
+    if (inp._micInjected) return; // already done
+    inp._micInjected = true;
+
+    var type = inp.getAttribute('data-voice');    // text | number | search
+    var target = inp.getAttribute('data-voice-target') || ''; // function to call after fill
+
+    // Wrap input in a relative container
+    var parent = inp.parentNode;
+    var wrapper = document.createElement('div');
+    wrapper.style.cssText = 'position:relative;display:flex;align-items:center;';
+    parent.insertBefore(wrapper, inp);
+    wrapper.appendChild(inp);
+    inp.style.paddingRight = '34px';
+
+    // Mic button
+    var mic = document.createElement('button');
+    mic.type = 'button';
+    mic.innerHTML = '\uD83C\uDFA4';
+    mic.title = 'Tap to fill by voice';
+    mic.style.cssText = 'position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;padding:2px;line-height:1;color:#1565C0;z-index:2;';
+    wrapper.appendChild(mic);
+
+    mic.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      startFieldVoice(inp, type, target, mic);
+    });
+  });
+}
+
+// Start voice for a specific field
+function startFieldVoice(inp, type, targetFn, micBtn) {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    showToast('Use Chrome/Edge for voice input', 'error');
+    return;
+  }
+  var isHi = typeof _currentLang !== 'undefined' && _currentLang === 'hi';
+
+  // Request mic permission first
+  var doStart = function() {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var recog = new SR();
+    recog.lang = isHi ? 'hi-IN' : 'en-IN';
+    recog.continuous = false;
+    recog.interimResults = false;
+    recog.maxAlternatives = 1;
+
+    if (micBtn) micBtn.style.color = '#C62828';
+    inp.placeholder = isHi ? '\uD83C\uDFA4 \u0938\u0941\u0928 \u0930\u0939\u093E \u0939\u0942\u0902...' : '\uD83C\uDFA4 Listening...';
+
+    recog.onresult = function(event) {
+      var t = event.results[0][0].transcript.trim();
+      if (type === 'number') {
+        // Extract first number from spoken text
+        var nums = t.match(/[\d.]+/);
+        inp.value = nums ? nums[0] : t;
+      } else {
+        inp.value = t;
+      }
+      // Trigger oninput/onchange so dependent logic runs
+      inp.dispatchEvent(new Event('input', { bubbles: true }));
+      inp.dispatchEvent(new Event('change', { bubbles: true }));
+      // Call target function if specified
+      if (targetFn && typeof window[targetFn] === 'function') window[targetFn]();
+    };
+
+    recog.onend = function() {
+      if (micBtn) micBtn.style.color = '#1565C0';
+      inp.placeholder = inp._origPlaceholder || '';
+    };
+
+    recog.onerror = function(ev) {
+      if (micBtn) micBtn.style.color = '#1565C0';
+      inp.placeholder = inp._origPlaceholder || '';
+      if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') {
+        showToast(isHi ? 'Browser > Site Settings > Microphone > Allow' : 'Allow mic in browser Site Settings', 'error');
+      }
+    };
+
+    inp._origPlaceholder = inp._origPlaceholder || inp.placeholder;
+    try { recog.start(); } catch(e) {
+      if (micBtn) micBtn.style.color = '#1565C0';
+    }
+  };
+
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(function(stream) {
+        stream.getTracks().forEach(function(t) { t.stop(); });
+        doStart();
+      })
+      .catch(function(err) {
+        var isHiNow = typeof _currentLang !== 'undefined' && _currentLang === 'hi';
+        showToast(isHiNow ? 'माइक Allow करें: Browser Settings > Site > Mic' : 'Allow mic: Browser Settings > Site > Microphone', 'error');
+      });
+  } else {
+    doStart();
+  }
+}
+
+// Run injector on load and after tab switches
+document.addEventListener('DOMContentLoaded', function() { setTimeout(injectVoiceMics, 800); });
+if (document.readyState !== 'loading') { setTimeout(injectVoiceMics, 800); }
+// Re-inject after modals open (party modal, batch, wastage)
+var _origSwitchTab = window.switchTab;
+window.addEventListener('click', function() { setTimeout(injectVoiceMics, 400); });
+
+// ══════════════════════════════════════════════════════
+// PACKET ↔ PIECE TOGGLE FOR BILL ITEMS
+// ══════════════════════════════════════════════════════
+function switchBillMode(i, mode) {
+  var item = billItems[i];
+  if (!item) return;
+  var p = products.find(function(x) { return x.id === item.id; });
+  if (!p || !p.piecesperpkt || !p.pieceprice) return;
+
+  if (mode === 'piece' && item.sellMode !== 'piece') {
+    // Switch to piece mode
+    billItems[i] = {
+      id: p.id, billKey: p.id + '_piece',
+      name: p.name + ' (per piece)',
+      brand: p.brand || '',
+      price: p.pieceprice,
+      qty: 1,
+      unit: 'pcs',
+      maxStock: p.stock * p.piecesperpkt,
+      sellMode: 'piece',
+      piecesperpkt: p.piecesperpkt,
+      packetStock: p.stock,
+      disc: item.disc || 0,
+      discType: item.discType || 'rs'
+    };
+    showToast('Switched to Piece mode: \u20b9' + p.pieceprice + '/pc');
+  } else if (mode === 'packet' && item.sellMode === 'piece') {
+    // Switch back to packet mode
+    billItems[i] = {
+      id: p.id, billKey: p.id,
+      name: p.name,
+      brand: p.brand || '',
+      price: p.sellprice,
+      qty: 1,
+      unit: p.unit,
+      maxStock: p.stock,
+      sellMode: 'packet',
+      disc: item.disc || 0,
+      discType: item.discType || 'rs'
+    };
+    showToast('Switched to Packet mode: \u20b9' + p.sellprice + '/' + p.unit);
+  }
+  renderBillItems();
+  updateBillTotal();
+}
+
+// ══════════════════════════════════════════════════════
+// PACKET ↔ PIECE TOGGLE FOR LEDGER ITEMS
+// ══════════════════════════════════════════════════════
+function switchLedgerMode(i, mode) {
+  var item = ledgerCreditItems[i];
+  if (!item) return;
+  var p = (typeof products !== 'undefined' ? products : []).find(function(x) { return x.id === item.id; });
+  if (!p || !p.piecesperpkt || !p.pieceprice) return;
+
+  if (mode === 'piece' && (item.sellMode || 'packet') !== 'piece') {
+    ledgerCreditItems[i].sellMode = 'piece';
+    ledgerCreditItems[i].price = p.pieceprice;
+    ledgerCreditItems[i].unit = 'pcs';
+    ledgerCreditItems[i].qty = 1;
+    showToast('Switched to Piece: \u20b9' + p.pieceprice + '/pc');
+  } else if (mode === 'packet' && item.sellMode === 'piece') {
+    ledgerCreditItems[i].sellMode = 'packet';
+    ledgerCreditItems[i].price = p.sellprice;
+    ledgerCreditItems[i].unit = p.unit;
+    ledgerCreditItems[i].qty = 1;
+    showToast('Switched to Packet: \u20b9' + p.sellprice + '/' + p.unit);
+  }
+  renderLedgerItemList();
+}
+
+// ══════════════════════════════════════════════════════
+// PRODUCT SEARCH FILTER FOR BATCH + WASTAGE SELECTS
+// ══════════════════════════════════════════════════════
+function bFilterProducts() {
+  var q = (document.getElementById('b-product-search') || {}).value || '';
+  var sel = document.getElementById('b-product');
+  if (!sel) return;
+  var lc = q.toLowerCase();
+  sel.innerHTML = '<option value="">-- Choose existing product --</option>' +
+    products.filter(function(p) {
+      return !lc || p.name.toLowerCase().includes(lc) || (p.brand||'').toLowerCase().includes(lc);
+    }).map(function(p) {
+      return '<option value="' + p.id + '">' + p.name + (p.brand ? ' (' + p.brand + ')' : '') + ' — Stock: ' + p.stock + ' ' + p.unit + '</option>';
+    }).join('');
+}
+
+function wFilterProducts() {
+  var q = (document.getElementById('w-product-search') || {}).value || '';
+  var sel = document.getElementById('w-product');
+  if (!sel) return;
+  var lc = q.toLowerCase();
+  sel.innerHTML = '<option value="">-- Choose product --</option>' +
+    products.filter(function(p) {
+      return p.stock > 0 && (!lc || p.name.toLowerCase().includes(lc) || (p.brand||'').toLowerCase().includes(lc));
+    }).map(function(p) {
+      return '<option value="' + p.id + '">' + p.name + (p.brand ? ' (' + p.brand + ')' : '') + ' — Stock: ' + p.stock + ' ' + p.unit + '</option>';
+    }).join('');
 }
 </script>
 
