@@ -1045,7 +1045,7 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
 </div>
 
 <!-- ===== WHATSAPP BILL SHARE MODAL ===== -->
-<div id="wa-modal" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;">
+<div id="wa-modal" style="display:none;position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;">
   <div style="background:white;border-radius:18px;padding:24px 22px;width:420px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:slideUp 0.25s ease;">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
       <span style="font-size:2rem;">💬</span>
@@ -3028,11 +3028,14 @@ input[type="number"], input[type="text"], input[type="tel"], input[type="email"]
             1. Visit <strong>console.cloud.google.com</strong><br>
             2. New Project "KiranaBook" &rarr; Enable "Google Drive API"<br>
             3. Credentials &rarr; OAuth 2.0 Client ID &rarr; Web application<br>
-            4. Add <strong id="gdrive-origin-show">(your site URL)</strong> to Authorized JavaScript origins<br>
+            4. Authorized JavaScript origins: <strong id="gdrive-origin-show">(your site URL)</strong><br>
+            4b. Authorized redirect URIs: <strong id="gdrive-page-url-show">(your page URL)</strong><br>
             5. Tap <strong>Connect Google Drive</strong> and paste your Client ID
             <script>
               var el=document.getElementById('gdrive-origin-show');
               if(el) el.textContent = window.location.protocol==='file:' ? '(host on GitHub Pages first)' : window.location.origin;
+              var el2=document.getElementById('gdrive-page-url-show');
+              if(el2) el2.textContent = window.location.protocol==='file:' ? '(host on GitHub Pages first)' : window.location.href.split('#')[0].split('?')[0];
               var setupInfo=document.getElementById('gdrive-setup-info');
               var fileWarn=document.getElementById('gdrive-file-warning');
               if(window.location.protocol==='file:'){
@@ -3653,6 +3656,7 @@ function isTabAllowed(tab) {
 }
 
 function switchTab(tab) {
+  setTimeout(injectVoiceMics, 300);
   if (!isTabAllowed(tab)) {
     showToast('🔒 Access restricted by owner!', 'error');
     return;
@@ -5068,7 +5072,31 @@ function completeBill() {
 
   document.getElementById('wa-message').value = msg;
   document.getElementById('wa-phone-input').value = custPhone;
-  document.getElementById('wa-modal').style.display = 'flex';
+
+  // Mark bill as pending-clear so Complete Bill can't be tapped again
+  // IMMEDIATELY clear bill items so it can't be double-billed
+  billItems = [];
+  renderBillItems();
+  updateBillTotal();
+
+  // Reset bill form fields
+  document.getElementById('cust-name').value = '';
+  document.getElementById('bill-discount').value = '0';
+  var _cp = document.getElementById('cash-paid'); if (_cp) _cp.value = '';
+  var _cr = document.getElementById('cash-change-row'); if (_cr) _cr.style.display = 'none';
+  var _sr = document.getElementById('cash-short-row'); if (_sr) _sr.style.display = 'none';
+
+  // Show WhatsApp modal — set each style property individually (cssText !important is ignored in JS)
+  var waModal = document.getElementById('wa-modal');
+  if (waModal) {
+    waModal.style.display    = 'flex';
+    waModal.style.position   = 'fixed';
+    waModal.style.inset      = '0';
+    waModal.style.zIndex     = '100001';
+    waModal.style.background = 'rgba(0,0,0,0.55)';
+    waModal.style.alignItems = 'center';
+    waModal.style.justifyContent = 'center';
+  }
 }
 
 function sendWhatsApp() {
@@ -5083,12 +5111,8 @@ function sendWhatsApp() {
 }
 
 function closeWaModal() {
-  document.getElementById('wa-modal').style.display = 'none';
-  // Check if billing tab is currently active (uses CSS class, not inline style)
-  var billingTab = document.getElementById('tab-billing');
-  if (billingTab && billingTab.classList.contains('active')) {
-    clearBill();
-  }
+  var modal = document.getElementById('wa-modal');
+  if (modal) modal.style.display = 'none';
 }
 
 // ── Cash Calculator ──
@@ -7627,24 +7651,27 @@ function expCatChange() {
 }
 
 function saveExpense() {
-  const cat = document.getElementById('exp-category').value;
-  const customCat = document.getElementById('exp-custom').value.trim();
-  const category = cat === 'Other' && customCat ? customCat : cat;
+  // exp-category is now a free-text input (select was replaced)
+  var catEl = document.getElementById('exp-category');
+  var category = (catEl ? catEl.value : '').trim() || 'Other';
   const amount = parseFloat(document.getElementById('exp-amount').value) || 0;
   const date = document.getElementById('exp-date').value;
-  const recurrence = document.getElementById('exp-recurrence').value;
+  const recurrenceEl = document.getElementById('exp-recurrence');
+  const recurrence = recurrenceEl ? recurrenceEl.value : 'once';
   const notes = document.getElementById('exp-notes').value.trim();
   if (!amount || amount <= 0) { showToast('Please enter a valid amount!', 'error'); return; }
   if (!date) { showToast('Please select a date!', 'error'); return; }
+  if (!category) { showToast('Please enter a category!', 'error'); return; }
+  // Save the category to custom list for future suggestions
+  if (typeof saveToCustomList === 'function') saveToCustomList('kirana_custom_exp_cats', category);
   expenses.unshift({ id: uid(), category, amount, date, recurrence, notes, createdAt: new Date().toISOString() });
   save();
   logActivity('expense', { category, amount, date, recurrence, notes });
-  showToast('✅ Expense of ₹' + amount.toFixed(2) + ' saved!');
+  showToast('Expense of ₹' + amount.toFixed(2) + ' saved!');
   // Reset form
   document.getElementById('exp-amount').value = '';
   document.getElementById('exp-notes').value = '';
-  document.getElementById('exp-custom').value = '';
-  document.getElementById('exp-custom-group').style.display = 'none';
+  if (catEl) catEl.value = '';
   renderExpenses();
 }
 
@@ -10267,15 +10294,17 @@ function gdriveConnect() {
 }
 
 function gdriveOpenOAuthPopup(clientId) {
-  var origin = window.location.origin;
+  // redirect_uri must be the EXACT URL of the current page
+  // This is what must be registered in Google Cloud Console > Authorized redirect URIs
+  var currentUrl = window.location.href.split('#')[0].split('?')[0]; // clean URL without hash/params
   var scope = encodeURIComponent(GDRIVE_SCOPES + ' https://www.googleapis.com/auth/userinfo.email');
-  // Use implicit flow — token returned directly in URL fragment
   var authUrl = 'https://accounts.google.com/o/oauth2/v2/auth' +
     '?client_id=' + encodeURIComponent(clientId) +
-    '&redirect_uri=' + encodeURIComponent(origin + '/') +
+    '&redirect_uri=' + encodeURIComponent(currentUrl) +
     '&response_type=token' +
     '&scope=' + scope +
     '&include_granted_scopes=true' +
+    '&prompt=consent' +
     '&state=gdrive_kiranabook';
 
   var popup = window.open(authUrl, 'gdrive_auth',
@@ -11337,6 +11366,9 @@ function processVoiceCommand(text) {
 function injectVoiceMics() {
   document.querySelectorAll('[data-voice]').forEach(function(inp) {
     if (inp._micInjected) return; // already done
+    // Skip inputs inside modals that have fixed layouts (wa-modal, party-modal, etc.)
+    if (inp.closest('#wa-modal') || inp.closest('#party-modal-overlay') ||
+        inp.closest('#license-overlay') || inp.closest('#auth-overlay')) return;
     inp._micInjected = true;
 
     var type = inp.getAttribute('data-voice');    // text | number | search
@@ -11441,7 +11473,7 @@ document.addEventListener('DOMContentLoaded', function() { setTimeout(injectVoic
 if (document.readyState !== 'loading') { setTimeout(injectVoiceMics, 800); }
 // Re-inject after modals open (party modal, batch, wastage)
 var _origSwitchTab = window.switchTab;
-window.addEventListener('click', function() { setTimeout(injectVoiceMics, 400); });
+// Voice mics are injected on load and on tab switch — no global click listener needed
 
 // ══════════════════════════════════════════════════════
 // PACKET ↔ PIECE TOGGLE FOR BILL ITEMS
